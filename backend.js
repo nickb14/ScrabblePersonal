@@ -26,9 +26,11 @@ let turn = 0
 let bBag = null
 let bBoard = null
 const bScoreboard = []
+const endScores = []
+let posId = -1
 
 io.on('connection', (socket) => {
-  // if (numPlayers == 4) return
+  if (numPlayers == 4) return
   
 
   numPlayers++
@@ -44,6 +46,39 @@ io.on('connection', (socket) => {
     bScoreboard.length = 0
     scoreboardArray.forEach((score) => {bScoreboard.push(score)})
     io.emit('endTurn', turn, bBag, bBoard, bScoreboard)
+  })
+
+  socket.on('endGame', (bagArray, boardArray, scoreboardArray) => {
+    turn = -1
+    bBag = bagArray
+    bBoard = boardArray
+    bScoreboard.length = 0
+    scoreboardArray.forEach((score) => {bScoreboard.push(score)})
+
+    io.emit('endScores')
+
+    //blocking until all of the endScores (negative points) are collected
+    function wait() {
+      if (endScores.length < numPlayers) {
+        setTimeout(wait, 100)
+      } else {
+        if (posId >= 0) {
+          let sum = 0
+          endScores.forEach((score) => {sum += score})
+          bScoreboard[posId].push(sum)
+        }
+        io.emit('endTurn', turn, bBag, bBoard, bScoreboard)
+      }
+    }
+    wait()
+  })
+
+  socket.on('endScores', (id, score) => {
+    endScores.push(score)
+    if (score > 0)
+      bScoreboard[id].push(-score)
+    else
+      posId = id
   })
 
   console.log(numPlayers)

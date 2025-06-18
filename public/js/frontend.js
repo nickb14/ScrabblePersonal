@@ -65,6 +65,11 @@ socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard) => {
     exchange.setActive(turn == id && bag.tilesLeft() >= 7)
 })
 
+//for negative points at the end of the game
+socket.on('endScores', () => {
+    socket.emit('endScores', id, hand.score())
+})
+
 //everything here is called every frame so it "draws" frame by frame, animates...
 function animate() {
     requestAnimationFrame(animate)

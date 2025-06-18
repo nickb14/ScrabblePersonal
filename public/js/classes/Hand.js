@@ -84,6 +84,13 @@ class Hand {
         this.placedTiles = []
     }
 
+    //returns the sum of the tile values (for negative end game points)
+    score() {
+        let sum = 0
+        this.tiles.forEach((tile) => {sum += tile.getValue()})
+        return sum
+    }
+
     draw(c) {
         this.tiles.forEach((tile) => {tile.draw(c)})
         c.beginPath()

@@ -44,7 +44,11 @@ addEventListener('click', (event) => {
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
-    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray)
+
+    if (hand.emptyTiles() < 7)
+      socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray)
+    else
+      socket.emit('endGame', bag.toArray(), board.toArray(), scoreboardArray)
   }
   if (exchange.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
     hand.reset()
