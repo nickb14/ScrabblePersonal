@@ -8,7 +8,7 @@ const server = createServer(app)
 const io = new Server(server)
 
 //just the port number
-const port = 3000
+const port = 8080
 
 app.use(express.static('public'))
 
