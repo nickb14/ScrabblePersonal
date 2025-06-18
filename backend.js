@@ -22,22 +22,39 @@ app.get('/', (req, res) => {
 
 //game objects... (backend)
 let numPlayers = 0
+const players = {}
+const disconnected = []
+
 let turn = 0
 let bBag = null
 let bBoard = null
 const bScoreboard = []
+const bHands = []
+
 const endScores = []
 let posId = -1
 
+
 io.on('connection', (socket) => {
-  if (numPlayers == 4) return
-  
+  if (disconnected.length > 0) {
+    const id = disconnected[0]
+    disconnected.splice(0, 1)
+    players[socket.id] = id
+    io.emit('reconnectPlayer', id, bHands[id])
+    socket.emit('endTurn', turn, bBag, bBoard, bScoreboard, disconnected)
+  }
+  else if (numPlayers < 4) {
+    players[socket.id] = numPlayers
+    numPlayers++
+    turn--
+    bHands.push(null)
+    socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard)
+  }
+  else {
+    return
+  }
 
-  numPlayers++
-  turn--
-  socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard)
-
-  socket.on('endTurn', (bagArray, boardArray, scoreboardArray) => {
+  socket.on('endTurn', (bagArray, boardArray, scoreboardArray, handArray) => {
     turn++
     if (turn >= numPlayers)
       turn = 0
@@ -45,7 +62,8 @@ io.on('connection', (socket) => {
     bBoard = boardArray
     bScoreboard.length = 0
     scoreboardArray.forEach((score) => {bScoreboard.push(score)})
-    io.emit('endTurn', turn, bBag, bBoard, bScoreboard)
+    bHands[players[socket.id]] = handArray
+    io.emit('endTurn', turn, bBag, bBoard, bScoreboard, disconnected)
   })
 
   socket.on('endGame', (bagArray, boardArray, scoreboardArray) => {
@@ -67,13 +85,14 @@ io.on('connection', (socket) => {
           endScores.forEach((score) => {sum += score})
           bScoreboard[posId].push(sum)
         }
-        io.emit('endTurn', turn, bBag, bBoard, bScoreboard)
+        io.emit('endTurn', turn, bBag, bBoard, bScoreboard, disconnected)
       }
     }
     wait()
   })
 
-  socket.on('endScores', (id, score) => {
+  socket.on('endScores', (score) => {
+    const id = players[socket.io]
     endScores.push(score)
     if (score > 0)
       bScoreboard[id].push(-score)
@@ -81,8 +100,16 @@ io.on('connection', (socket) => {
       posId = id
   })
 
-  console.log(numPlayers)
+  socket.on('disconnect', () => {
+    disconnected.push(players[socket.id])
+    io.emit('disconnectPlayer', players[socket.id])
+    delete players[socket.id]
+  })
+
+  console.log(players)
 })
+
+
 
 
 

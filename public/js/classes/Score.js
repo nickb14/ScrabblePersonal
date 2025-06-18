@@ -8,6 +8,7 @@ class Score {
         this.current = 0
         this.active = false
         this.isPlayer = isPlayer
+        this.connected = true
     }
 
     //sets the current turn's score
@@ -31,6 +32,11 @@ class Score {
     //sets whether it is this score's turn (based on turn)
     setActive(turn) {
         this.active = turn == this.id
+    }
+
+    //sets whether this player is connected
+    setConnected(connected) {
+        this.connected = connected
     }
 
     //uses (turn) fyi
@@ -57,7 +63,10 @@ class Score {
             c.fillRect(this.x-TILE_SIZE/6, this.y-TILE_SIZE/2, width+TILE_SIZE/3, TILE_SIZE*(3+this.scores.length/2))
         }
 
-        c.fillStyle = "black"
+        if (this.connected)
+            c.fillStyle = "black"
+        else
+            c.fillStyle = "gray"
         c.textAlign = "left"
         c.textBaseline = "middle"
         c.fillText(name, this.x, this.y)

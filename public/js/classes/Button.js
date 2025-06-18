@@ -7,7 +7,7 @@ class Button {
         this.text = text
         this.text2 = text2
         this.hover = false
-        this.active = true
+        this.active = false
     }
 
     //sets the hovering state of the button based on (x, y)

@@ -46,7 +46,7 @@ addEventListener('click', (event) => {
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
 
     if (hand.emptyTiles() < 7)
-      socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray)
+      socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
     else
       socket.emit('endGame', bag.toArray(), board.toArray(), scoreboardArray)
   }
@@ -62,7 +62,7 @@ addEventListener('click', (event) => {
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
-    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray)
+    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
   }
   end.setActive(turn == id && board.valid())
 })

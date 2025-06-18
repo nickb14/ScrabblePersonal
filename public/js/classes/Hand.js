@@ -98,4 +98,15 @@ class Hand {
         c.lineTo(this.x-TILE_SIZE/2 + TILE_SIZE*7, this.y+TILE_SIZE/2)
         c.stroke()
     }
+
+    toArray() {
+        const array = []
+        this.tiles.forEach((tile) => {array.push(tile.getLetter())})
+        return array
+    }
+
+    fromArray(array) {
+        this.tiles.length = 0
+        array.forEach((letter) => {this.tiles.push(new Tile(letter))})
+    }
 }
