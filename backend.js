@@ -8,7 +8,7 @@ const server = createServer(app)
 const io = new Server(server)
 
 //just the port number
-const port = 8080
+const port = 3000
 
 app.use(express.static('public'))
 
@@ -52,6 +52,6 @@ io.on('connection', (socket) => {
 
 
 
-server.listen(port, '0.0.0.0', () => {
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
