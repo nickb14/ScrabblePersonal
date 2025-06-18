@@ -38,10 +38,10 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
         board.fromArray(bBoard)
 
     for (let i = 0; i < bScoreboard.length; i++) {
-        scoreboard.push(new Score(i))
+        scoreboard.push(new Score(i, false))
         scoreboard[i].fromArray(bScoreboard[i])
     }
-    scoreboard.push(new Score(id))
+    scoreboard.push(new Score(id, true))
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
@@ -54,9 +54,11 @@ socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard) => {
     bag.fromArray(bBag)
     board.fromArray(bBoard)
     if (scoreboard.length < bScoreboard.length)
-        scoreboard.push(new Score(scoreboard.length))
-    for (let i = 0; i < bScoreboard.length; i++)
+        scoreboard.push(new Score(scoreboard.length, false))
+    for (let i = 0; i < bScoreboard.length; i++) {
         scoreboard[i].fromArray(bScoreboard[i])
+        scoreboard[i].setActive(turn)
+    }
 
     reset.setActive(turn == id)
     end.setActive(turn == id)

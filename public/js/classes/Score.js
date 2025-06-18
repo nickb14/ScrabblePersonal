@@ -1,11 +1,13 @@
 class Score {
-    constructor(id) {
+    constructor(id, isPlayer) {
         this.x = TILE_SIZE*16 + TILE_SIZE*3*id
         this.y = TILE_SIZE*3
         this.id = id
         this.name = 'Player ' + id
         this.scores = []
         this.current = 0
+        this.active = false
+        this.isPlayer = isPlayer
     }
 
     //sets the current turn's score
@@ -26,29 +28,55 @@ class Score {
         return total + this.current
     }
 
+    //sets whether it is this score's turn (based on turn)
+    setActive(turn) {
+        this.active = turn == this.id
+    }
+
+    //uses (turn) fyi
     draw(c) {
         c.beginPath()
         c.font = TILE_SIZE*2/3 + "px Arial"
+        let name = this.name
+        let width = c.measureText(name).width
+        if (width > TILE_SIZE*3) {
+            while (width > TILE_SIZE*3) {
+                name = name.slice(0, -1)
+                width = c.measureText(name + '...').width
+            }
+            name += '...'
+        } else if (width < TILE_SIZE) {
+            width = TILE_SIZE
+        }
+
+        if (this.active) {
+            c.fillStyle = "burlywood"
+            c.fillRect(this.x-TILE_SIZE/6, this.y-TILE_SIZE/2, width+TILE_SIZE/3, TILE_SIZE*(3+this.scores.length/2))
+        }
+
         c.fillStyle = "black"
         c.textAlign = "left"
         c.textBaseline = "middle"
-        c.fillText(this.name, this.x, this.y)
+        c.fillText(name, this.x, this.y)
 
         c.moveTo(this.x, this.y+TILE_SIZE/2)
-        c.lineTo(this.x + c.measureText(this.name).width, this.y+TILE_SIZE/2)
+        c.lineTo(this.x + width, this.y+TILE_SIZE/2)
         c.stroke()
 
         c.font = TILE_SIZE/3 + "px Arial"
         let i = 0
         for ( ; i < this.scores.length; i++)
             c.fillText(this.scores[i], this.x, this.y+TILE_SIZE*(1+i/2))
-        c.fillText("(" + this.current + ")", this.x, this.y+TILE_SIZE*(1+i/2))
+        if (this.active && this.isPlayer) {
+            c.fillText("(" + this.current + ")", this.x, this.y+TILE_SIZE*(1+i/2))
+            i++
+        }
 
         c.font = TILE_SIZE*2/3 + "px Arial"
-        c.moveTo(this.x, this.y+TILE_SIZE*(1.5+i/2))
-        c.lineTo(this.x + c.measureText(this.name).width, this.y+TILE_SIZE*(1.5+i/2))
+        c.moveTo(this.x, this.y+TILE_SIZE*(1+i/2))
+        c.lineTo(this.x + width, this.y+TILE_SIZE*(1+i/2))
         c.stroke()
-        c.fillText(this.total(), this.x, this.y+TILE_SIZE*(2+i/2))
+        c.fillText(this.total(), this.x, this.y+TILE_SIZE*(1.5+i/2))
     }
 
     toArray() {
