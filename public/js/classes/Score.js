@@ -36,7 +36,10 @@ class Score {
     //uses (turn) fyi
     draw(c) {
         c.beginPath()
-        c.font = TILE_SIZE*2/3 + "px Arial"
+        if (this.isPlayer)
+            c.font = "bold " + TILE_SIZE*2/3 + "px Arial"
+        else
+            c.font = TILE_SIZE*2/3 + "px Arial"
         let name = this.name
         let width = c.measureText(name).width
         if (width > TILE_SIZE*3) {
