@@ -20,6 +20,7 @@ const board = new Board()
 const reset = new Button(TILE_SIZE*9, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "reset", "turn")
 const end = new Button(TILE_SIZE*11, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "end", "turn")
 const exchange = new Button(TILE_SIZE*13.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "exchange", "tiles")
+const challenge = new Button(TILE_SIZE*16.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "challenge", null)
 const scoreboard = []
 
 //when the player gets added to the game for the first time
@@ -37,6 +38,7 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
     if (bBoard)
         board.fromArray(bBoard)
 
+    scoreboard.length = 0
     for (let i = 0; i < bScoreboard.length; i++) {
         scoreboard.push(new Score(i, false))
         scoreboard[i].fromArray(bScoreboard[i])
@@ -45,11 +47,11 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
-    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
+    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray(), false)
 })
 
 //when any player's turn ends
-socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, disconnected) => {
+socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, backTurn) => {
     turn = bTurn
     bag.fromArray(bBag)
     board.fromArray(bBoard)
@@ -59,11 +61,14 @@ socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, disconnected) => {
         scoreboard[i].fromArray(bScoreboard[i])
         scoreboard[i].setActive(turn)
     }
+    hand.fromArray(bHands[id])
+    hand.alignTiles()
     disconnected.forEach((bId) => {scoreboard[bId].setConnected(false)})
 
     reset.setActive(turn == id)
     end.setActive(turn == id)
     exchange.setActive(turn == id && bag.tilesLeft() >= 7)
+    challenge.setActive(backTurn)
 })
 
 //for negative points at the end of the game
@@ -77,13 +82,10 @@ socket.on('disconnectPlayer', (id) => {
 
 //directly re-adding player
 socket.on('reconnectPlayer', (bId, bHand) => {
-    if (id == -1) {
+    if (id == -1)
         id = bId
-        hand.fromArray(bHand)
-        hand.alignTiles()
-    } else {
+    else
         scoreboard[bId].setConnected(true)
-    }
 })
 
 //everything here is called every frame so it "draws" frame by frame, animates...
@@ -95,6 +97,7 @@ function animate() {
     reset.draw(ctx)
     end.draw(ctx)
     exchange.draw(ctx)
+    challenge.draw(ctx)
     scoreboard.forEach((score) => {score.draw(ctx)})
     board.draw(ctx)
     hand.draw(ctx)

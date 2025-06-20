@@ -14,6 +14,7 @@ addEventListener('mousemove', (event) => {
   reset.hovering(event.clientX-rect.left, event.clientY-rect.top)
   end.hovering(event.clientX-rect.left, event.clientY-rect.top)
   exchange.hovering(event.clientX-rect.left, event.clientY-rect.top)
+  challenge.hovering(event.clientX-rect.left, event.clientY-rect.top)
 })
 
 //mouseup release tile
@@ -46,9 +47,9 @@ addEventListener('click', (event) => {
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
 
     if (hand.emptyTiles() < 7)
-      socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
+      socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray(), true)
     else
-      socket.emit('endGame', bag.toArray(), board.toArray(), scoreboardArray)
+      socket.emit('endGame', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
   }
   if (exchange.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
     hand.reset()
@@ -62,7 +63,14 @@ addEventListener('click', (event) => {
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
-    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray())
+    socket.emit('endTurn', bag.toArray(), board.toArray(), scoreboardArray, hand.toArray(), true)
+  }
+  if (challenge.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
+    hand.reset()
+    board.reset(hand)
+    hand.alignTiles()
+    scoreboard[id].setScore(0)
+    socket.emit('backTurn')
   }
   end.setActive(turn == id && board.valid())
 })
