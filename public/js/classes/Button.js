@@ -33,11 +33,11 @@ class Button {
     draw(c) {
         c.beginPath()
         if (!this.active)
-            c.fillStyle = "red"
-        else if (this.hover)
             c.fillStyle = "gray"
+        else if (this.hover)
+            c.fillStyle = "white"
         else
-            c.fillStyle = "darkgray"
+            c.fillStyle = "deeppink"
         c.fillRect(this.x-this.l/2, this.y-this.w/2, this.l, this.w)
         c.strokeRect(this.x-this.l/2, this.y-this.w/2, this.l, this.w)
         c.font = this.w/3 + "px Arial"

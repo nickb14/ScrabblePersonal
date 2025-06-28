@@ -20,8 +20,11 @@ const board = new Board()
 const reset = new Button(TILE_SIZE*9, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "reset", "turn")
 const end = new Button(TILE_SIZE*11, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "end", "turn")
 const exchange = new Button(TILE_SIZE*13.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "exchange", "tiles")
-const challenge = new Button(TILE_SIZE*16.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "challenge", null)
+const challenge = new Button(TILE_SIZE*16.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "back one", "turn")
 const scoreboard = []
+
+let tileGrabbed = null
+const rect = canvas.getBoundingClientRect()
 
 //when the player gets added to the game for the first time
 socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
@@ -52,6 +55,8 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
 
 //when any player's turn ends
 socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, backTurn) => {
+    tileGrabbed = null
+    
     turn = bTurn
     bag.fromArray(bBag)
     board.fromArray(bBoard)
@@ -104,7 +109,7 @@ function animate() {
 }
 
 //a bunch of event listeners for mouse input, for tile grabbing and buttons... (in eventListeners.js)
-let tileGrabbed = null
-const rect = canvas.getBoundingClientRect()
+// let tileGrabbed = null
+// const rect = canvas.getBoundingClientRect()
 
 animate()
