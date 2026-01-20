@@ -1,8 +1,11 @@
+//scrabble frontend logic, in tandem with eventListeners.js
+
 //setting up canvas (the component everything is drawn on?)
 //and context (what you call to draw stuff?)
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 
+//namespace
 const socket = io()
 
 canvas.width = innerWidth
