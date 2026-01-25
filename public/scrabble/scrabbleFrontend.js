@@ -24,6 +24,8 @@ const reset = new Button(TILE_SIZE*9, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "reset
 const end = new Button(TILE_SIZE*11, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "end", "turn")
 const exchange = new Button(TILE_SIZE*13.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "exchange", "tiles")
 const challenge = new Button(TILE_SIZE*16.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "back one", "turn")
+const endGame = new Button(TILE_SIZE*21, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "END", "GAME")
+const resetGame = new Button(TILE_SIZE*23, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "RESET", "GAME")
 const scoreboard = []
 
 let tileGrabbed = null
@@ -58,6 +60,8 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
 
 //when any player's turn ends
 socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, backTurn) => {
+    if (id == -1) return
+
     tileGrabbed = null
     
     turn = bTurn
@@ -77,10 +81,14 @@ socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, ba
     end.setActive(turn == id)
     exchange.setActive(turn == id && bag.tilesLeft() >= 7)
     challenge.setActive(backTurn)
+    endGame.setActive(turn != -1)
+    resetGame.setActive(turn == -1)
 })
 
 //for negative points at the end of the game
 socket.on('endScores', () => {
+    if (id == -1) return
+
     socket.emit('endScores', hand.score())
 })
 
@@ -96,6 +104,20 @@ socket.on('reconnectPlayer', (bId, bHand) => {
         scoreboard[bId].setConnected(true)
 })
 
+//to deactivate everything on game reset
+socket.on('resetGame', () => {
+    id = -1
+
+    scoreboard.forEach((score) => {score.setConnected(false)})
+
+    reset.setActive(false)
+    end.setActive(false)
+    exchange.setActive(false)
+    challenge.setActive(false)
+    endGame.setActive(false)
+    resetGame.setActive(false)
+})
+
 //everything here is called every frame so it "draws" frame by frame, animates...
 function animate() {
     requestAnimationFrame(animate)
@@ -106,13 +128,13 @@ function animate() {
     end.draw(ctx)
     exchange.draw(ctx)
     challenge.draw(ctx)
+    endGame.draw(ctx)
+    resetGame.draw(ctx)
     scoreboard.forEach((score) => {score.draw(ctx)})
     board.draw(ctx)
     hand.draw(ctx)
 }
 
 //a bunch of event listeners for mouse input, for tile grabbing and buttons... (in eventListeners.js)
-// let tileGrabbed = null
-// const rect = canvas.getBoundingClientRect()
 
 animate()
