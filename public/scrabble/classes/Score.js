@@ -2,6 +2,7 @@ class Score {
     constructor(id, isPlayer) {
         this.x = TILE_SIZE*16 + TILE_SIZE*3*id
         this.y = TILE_SIZE*3
+        this.w = TILE_SIZE*8/3
         this.id = id
         this.name = 'Player ' + id
         this.scores = []
@@ -9,6 +10,8 @@ class Score {
         this.active = false
         this.isPlayer = isPlayer
         this.connected = true
+        this.hover = false
+        this.editing = false
     }
 
     //sets the current turn's score
@@ -39,28 +42,73 @@ class Score {
         this.connected = connected
     }
 
+    //add character to name, or backspace/enter
+    editName(char) {
+        if (!this.editing)
+            return
+
+        if (char == 'Backspace')
+            this.name = this.name.slice(0, -1)
+        else if (char == 'Enter')
+            this.editing = false
+        //hidden max length 20
+        else if (this.name.length < 20 && char.length == 1 && char.charCodeAt(0) >= 32)
+            this.name += char
+    }
+
+    //gets player name
+    getName() {
+        return this.name
+    }
+
+    //sets player name
+    setName(name) {
+        this.name = name
+    }
+
+    //sets the hovering state of the score (button) based on (x, y)
+    hovering(x, y) {
+        if (this.clicked(x, y))
+            this.hover = true
+        else
+            this.hover = false
+    }
+
+    //returns whether (x, y) is above the score (button)
+    clicked(x, y) {
+        let l = TILE_SIZE
+        if (x < this.x-TILE_SIZE/6 || x > this.x+this.w+TILE_SIZE/6 || y < this.y-TILE_SIZE/2 || y > this.y+TILE_SIZE/2)
+            return false
+        return true
+    }
+
+    //toggles whether the name can currently be edited
+    toggleEditing() {
+        this.editing = !this.editing
+    }
+
     //uses (turn) fyi
-    draw(c) {
+    draw(c, time) {
         c.beginPath()
         if (this.isPlayer)
             c.font = "bold " + TILE_SIZE*2/3 + "px Arial"
         else
             c.font = TILE_SIZE*2/3 + "px Arial"
         let name = this.name
-        let width = c.measureText(name).width
-        if (width > TILE_SIZE*3) {
-            while (width > TILE_SIZE*3) {
+        this.w = c.measureText(name).width
+        if (this.w > TILE_SIZE*8/3) {
+            while (this.w > TILE_SIZE*8/3) {
                 name = name.slice(0, -1)
-                width = c.measureText(name + '...').width
+                this.w = c.measureText(name + '...').width
             }
             name += '...'
-        } else if (width < TILE_SIZE) {
-            width = TILE_SIZE
+        } else if (this.w < TILE_SIZE) {
+            this.w = TILE_SIZE
         }
 
         if (this.active) {
             c.fillStyle = "burlywood"
-            c.fillRect(this.x-TILE_SIZE/6, this.y-TILE_SIZE/2, width+TILE_SIZE/3, TILE_SIZE*(3+this.scores.length/2))
+            c.fillRect(this.x-TILE_SIZE/6, this.y-TILE_SIZE/2, this.w+TILE_SIZE/3, TILE_SIZE*(3+this.scores.length/2))
         }
 
         if (this.connected)
@@ -69,10 +117,27 @@ class Score {
             c.fillStyle = "gray"
         c.textAlign = "left"
         c.textBaseline = "middle"
-        c.fillText(name, this.x, this.y)
+        if (this.editing) {
+            c.fillText(this.name, this.x, this.y)
+            if (Math.trunc(time)%1000 < 500) {
+                c.lineWidth = 2
+                c.moveTo(this.x + c.measureText(this.name).width, this.y-TILE_SIZE/3)
+                c.lineTo(this.x + c.measureText(this.name).width, this.y+TILE_SIZE/3)
+                c.stroke()
+            }
+        } else {
+            c.fillText(name, this.x, this.y)
+        }
 
+        if (this.hover) {
+            c.lineWidth = 2
+            c.strokeRect(this.x-TILE_SIZE/6, this.y-TILE_SIZE/2, this.w+TILE_SIZE/3, TILE_SIZE)
+        }
+
+        c.beginPath()
+        c.lineWidth = 1
         c.moveTo(this.x, this.y+TILE_SIZE/2)
-        c.lineTo(this.x + width, this.y+TILE_SIZE/2)
+        c.lineTo(this.x + this.w, this.y+TILE_SIZE/2)
         c.stroke()
 
         c.font = TILE_SIZE/3 + "px Arial"
@@ -86,7 +151,7 @@ class Score {
 
         c.font = TILE_SIZE*2/3 + "px Arial"
         c.moveTo(this.x, this.y+TILE_SIZE*(1+i/2))
-        c.lineTo(this.x + width, this.y+TILE_SIZE*(1+i/2))
+        c.lineTo(this.x + this.w, this.y+TILE_SIZE*(1+i/2))
         c.stroke()
         c.fillText(this.total(), this.x, this.y+TILE_SIZE*(1.5+i/2))
     }

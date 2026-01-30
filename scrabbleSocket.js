@@ -2,6 +2,8 @@
 
 module.exports = (io) => {
 
+    const maxPlayers = 4
+
     //game objects... (backend)
     let numPlayers = 0
     let players = {}
@@ -12,6 +14,7 @@ module.exports = (io) => {
     let bBoard = null
     const bScoreboard = []
     const bHands = []
+    const bNames = Array(maxPlayers).fill(null)
 
     let lastValid = false
     let lastTurn = -1
@@ -30,14 +33,14 @@ module.exports = (io) => {
             disconnected.splice(0, 1)
             players[socket.id] = id
             io.emit('reconnectPlayer', id)
-            socket.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid)
+            socket.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid, bNames)
         }
-        else if (numPlayers < 4) {
+        else if (numPlayers < maxPlayers) {
             players[socket.id] = numPlayers
             numPlayers++
             turn--
             bHands.push(null)
-            socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard)
+            socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard, bNames)
         }
         else {
             return
@@ -62,7 +65,7 @@ module.exports = (io) => {
             bScoreboard.length = 0
             scoreboardArray.forEach((score) => {bScoreboard.push(score)})
             bHands[players[socket.id]] = handArray
-            io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid)
+            io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid, bNames)
         })
 
         socket.on('endGame', (bagArray, boardArray, scoreboardArray, handArray) => {
@@ -93,7 +96,7 @@ module.exports = (io) => {
                 endScores.forEach((score) => {sum += score})
                 bScoreboard[posId].push(sum)
                 }
-                io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, true)
+                io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, true, bNames)
             }
             }
             wait()
@@ -121,7 +124,7 @@ module.exports = (io) => {
             endScores.length = 0
             posId = -1
             
-            io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid)
+            io.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid, bNames)
         })
 
         socket.on('disconnect', () => {
@@ -156,7 +159,15 @@ module.exports = (io) => {
             io.emit('resetGame')
         })
 
-        console.log(players)
+        socket.on('changeName', (name) => {
+            const id = players[socket.id]
+            if (bNames[id] != name) {
+                bNames[id] = name
+                io.emit('changeName', id, name)
+            }
+        })
+
+        // console.log(players)
     })
 
 }

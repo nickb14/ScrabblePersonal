@@ -17,6 +17,7 @@ addEventListener('mousemove', (event) => {
   challenge.hovering(event.clientX-rect.left, event.clientY-rect.top)
   endGame.hovering(event.clientX-rect.left, event.clientY-rect.top)
   resetGame.hovering(event.clientX-rect.left, event.clientY-rect.top)
+  scoreboard[id].hovering(event.clientX-rect.left, event.clientY-rect.top)
 })
 
 //mouseup release tile
@@ -87,5 +88,16 @@ addEventListener('click', (event) => {
   if (resetGame.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
     socket.emit('resetGame')
   }
+  if (scoreboard[id].clicked(event.clientX-rect.left, event.clientY-rect.top)) {
+    scoreboard[id].toggleEditing()
+    socket.emit('changeName', scoreboard[id].getName())
+  }
   end.setActive(turn == id && board.valid() && id != -1)
+})
+
+//keydown edit name
+addEventListener('keydown', (event) => {
+  scoreboard[id].editName(event.key)
+  if (event.key == 'Enter')
+    socket.emit('changeName', scoreboard[id].getName())
 })

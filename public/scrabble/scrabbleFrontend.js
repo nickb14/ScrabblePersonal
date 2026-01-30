@@ -32,7 +32,7 @@ let tileGrabbed = null
 const rect = canvas.getBoundingClientRect()
 
 //when the player gets added to the game for the first time
-socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
+socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard, bNames) => {
     id = numPlayers-1
 
     if (!bBag)
@@ -49,9 +49,11 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
     scoreboard.length = 0
     for (let i = 0; i < bScoreboard.length; i++) {
         scoreboard.push(new Score(i, false))
+        scoreboard[i].setName(bNames[i])
         scoreboard[i].fromArray(bScoreboard[i])
     }
     scoreboard.push(new Score(id, true))
+    socket.emit('changeName', scoreboard[id].getName())
 
     const scoreboardArray = []
     scoreboard.forEach((score) => {scoreboardArray.push(score.toArray())})
@@ -59,7 +61,7 @@ socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard) => {
 })
 
 //when any player's turn ends
-socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, backTurn) => {
+socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, backTurn, bNames) => {
     if (id == -1) return
 
     tileGrabbed = null
@@ -67,8 +69,10 @@ socket.on('endTurn', (bTurn, bBag, bBoard, bScoreboard, bHands, disconnected, ba
     turn = bTurn
     bag.fromArray(bBag)
     board.fromArray(bBoard)
-    while (scoreboard.length < bScoreboard.length)
+    while (scoreboard.length < bScoreboard.length) {
         scoreboard.push(new Score(scoreboard.length, scoreboard.length == id))
+        scoreboard[scoreboard.length-1].setName(bNames[scoreboard.length-1])
+    }
     for (let i = 0; i < bScoreboard.length; i++) {
         scoreboard[i].fromArray(bScoreboard[i])
         scoreboard[i].setActive(turn)
@@ -118,8 +122,13 @@ socket.on('resetGame', () => {
     resetGame.setActive(false)
 })
 
+// when someone changes their name
+socket.on('changeName', (id_name, name) => {
+    scoreboard[id_name].setName(name)
+})
+
 //everything here is called every frame so it "draws" frame by frame, animates...
-function animate() {
+function animate(currentTime) {
     requestAnimationFrame(animate)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -130,7 +139,7 @@ function animate() {
     challenge.draw(ctx)
     endGame.draw(ctx)
     resetGame.draw(ctx)
-    scoreboard.forEach((score) => {score.draw(ctx)})
+    scoreboard.forEach((score) => {score.draw(ctx, currentTime)})
     board.draw(ctx)
     hand.draw(ctx)
 }
