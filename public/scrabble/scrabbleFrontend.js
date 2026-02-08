@@ -124,6 +124,8 @@ socket.on('resetGame', () => {
 
 // when someone changes their name
 socket.on('changeName', (id_name, name) => {
+    if (id == -1) return
+    
     scoreboard[id_name].setName(name)
 })
 

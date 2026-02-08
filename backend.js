@@ -10,7 +10,7 @@ const server = createServer(app)
 const io = new Server(server)
 
 //just the port number
-const port = 8080
+const port = process.env.PORT || 8080
 
 app.use(express.static('public'))
 
@@ -27,6 +27,14 @@ require('./scrabbleSocket')(io)
 
 
 
+//-----------JEOPARDY----------
+
+app.get('/jeopardylanding', (req, res) => {
+  res.sendFile(__dirname + '/public/jeopardylanding.html')
+})
+
+
+
 server.listen(port, '0.0.0.0', () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`ScrabblePersonal listening on port ${port}`)
 })
