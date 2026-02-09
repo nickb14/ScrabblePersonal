@@ -17,6 +17,7 @@ addEventListener('mousemove', (event) => {
   challenge.hovering(event.clientX-rect.left, event.clientY-rect.top)
   endGame.hovering(event.clientX-rect.left, event.clientY-rect.top)
   resetGame.hovering(event.clientX-rect.left, event.clientY-rect.top)
+  exit.hovering(event.clientX-rect.left, event.clientY-rect.top)
   if (id != -1)
     scoreboard[id].hovering(event.clientX-rect.left, event.clientY-rect.top)
 })
@@ -88,6 +89,9 @@ addEventListener('click', (event) => {
   }
   if (resetGame.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
     socket.emit('resetGame')
+  }
+  if (exit.clicked(event.clientX-rect.left, event.clientY-rect.top)) {
+    location.href = "/"
   }
   if (id != -1 && scoreboard[id].clicked(event.clientX-rect.left, event.clientY-rect.top)) {
     scoreboard[id].toggleEditing()

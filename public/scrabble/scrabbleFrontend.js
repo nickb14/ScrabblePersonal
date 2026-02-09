@@ -26,10 +26,14 @@ const exchange = new Button(TILE_SIZE*13.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE
 const challenge = new Button(TILE_SIZE*16.5, TILE_SIZE*17, TILE_SIZE*2, TILE_SIZE, "back one", "turn")
 const endGame = new Button(TILE_SIZE*21, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "END", "GAME")
 const resetGame = new Button(TILE_SIZE*23, TILE_SIZE*17, TILE_SIZE, TILE_SIZE, "RESET", "GAME")
+const exit = new Button(TILE_SIZE*23, TILE_SIZE, TILE_SIZE, TILE_SIZE, "exit", "game")
 const scoreboard = []
 
 let tileGrabbed = null
 const rect = canvas.getBoundingClientRect()
+
+//always called
+exit.setActive(true)
 
 //when the player gets added to the game for the first time
 socket.on('addPlayer', (numPlayers, bBag, bBoard, bScoreboard, bNames) => {
@@ -141,6 +145,7 @@ function animate(currentTime) {
     challenge.draw(ctx)
     endGame.draw(ctx)
     resetGame.draw(ctx)
+    exit.draw(ctx)
     scoreboard.forEach((score) => {score.draw(ctx, currentTime)})
     board.draw(ctx)
     hand.draw(ctx)
