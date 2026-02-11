@@ -20,7 +20,7 @@ app.use(express.static('public'))
 
 //the /scrabblepage url sends user to the html file :)
 app.get('/scrabblepage', (req, res) => {
-  res.sendFile(__dirname + '/public/scrabblepage.html')
+  res.sendFile(__dirname + '/public/scrabble/scrabblepage.html')
 })
 
 require('./scrabbleSocket')(io)
@@ -29,8 +29,12 @@ require('./scrabbleSocket')(io)
 
 //-----------JEOPARDY----------
 
-app.get('/jeopardylanding', (req, res) => {
-  res.sendFile(__dirname + '/public/jeopardylanding.html')
+app.get('/jeopardy', (req, res) => {
+  res.sendFile(__dirname + '/public/jeopardy/jeopardylanding.html')
+})
+
+app.get('/jeopardy/display', (req, res) => {
+  res.sendFile(__dirname + '/public/jeopardy/display/display.html')
 })
 
 

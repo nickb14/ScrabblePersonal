@@ -1,3 +1,5 @@
+//scrabble frontend logic, in tandem with scrabbleFrontend.js
+
 //mousedown select tile
 addEventListener('mousedown', (event) => {
   tileGrabbed = hand.grabTile(event.clientX-rect.left, event.clientY-rect.top)

@@ -8,11 +8,10 @@ const ctx = canvas.getContext('2d')
 //namespace
 const socket = io()
 
-canvas.width = innerWidth
+//everything size-wise is based on TILE_SIZE for now... (based on innerHeight)
 canvas.height = innerHeight
-
-//everything size-wise is based on TILE_SIZE for now...
 const TILE_SIZE = canvas.height / 20
+canvas.width = TILE_SIZE*24
 
 //declaring/initializing a bunch of game objects, basically...
 let id = -1
