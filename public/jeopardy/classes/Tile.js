@@ -1,19 +1,17 @@
 /**
  * any tile on the jeopardy board (header, value, clue, with answer, image)
  */
-class Tile {
+class Tile extends DisplayItem {
     /**
-     * x, y top left
+     * type: TILES.HEADER, TILES.VALUE, etc
+     * content: string to display
     */
-    constructor(type, x, y, w, h, content) {
+    constructor(type, content) {
+        super()
         this.type = type
-        this.x = x
-        this.y = y
-        this.w = w
-        this.h = h
         this.content = content
 
-        this.px = h/2
+        this.px = 0
     }
 
     /**
