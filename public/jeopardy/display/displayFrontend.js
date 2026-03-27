@@ -16,7 +16,10 @@ async function loadGame() {
 function startGame(gameData) {
     //all game items
     // const board = new Board(width/10)
-    const tile = new Tile(TILES.VALUE, 400)
+    // const tile = new Tile(TILES.VALUE, "400")
+    // const tile = new Tile(TILES.HEADER, "LARGE CATEGORY")
+    const tile = new Tile(TILES.CLUE, "big big clue this will have a lot of words idk ha aksh kajd aksdj e")
+    // console.log(gameData)
 
     //recalled everytime window is resized
     function resize() {
@@ -26,7 +29,7 @@ function startGame(gameData) {
         canvas.width = innerWidth * devicePixelRatio
         canvas.height = innerHeight * devicePixelRatio
 
-        tile.resize(50, 50, canvas.width/10, canvas.height/10)
+        tile.resize(50, 50, canvas.width/2, canvas.height/2)
     }
     resize()
     window.addEventListener("resize", resize)
