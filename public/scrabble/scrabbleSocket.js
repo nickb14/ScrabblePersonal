@@ -27,24 +27,26 @@ module.exports = (io) => {
     let posId = -1
 
     io.on('connection', (socket) => {
-        //reconnecting players logic
-        if (disconnected.length > 0) {
-            const id = disconnected[0]
-            disconnected.splice(0, 1)
-            players[socket.id] = id
-            io.emit('reconnectPlayer', id)
-            socket.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid, bNames)
-        }
-        else if (numPlayers < maxPlayers) {
-            players[socket.id] = numPlayers
-            numPlayers++
-            turn--
-            bHands.push(null)
-            socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard, bNames)
-        }
-        else {
-            return
-        }
+        //now explicit join call only when scrabbleFrontend.js is run
+        socket.on('joinGame', () => {
+            if (disconnected.length > 0) {
+                const id = disconnected[0]
+                disconnected.splice(0, 1)
+                players[socket.id] = id
+                io.emit('reconnectPlayer', id)
+                socket.emit('endTurn', turn, bBag, bBoard, bScoreboard, bHands, disconnected, lastValid, bNames)
+            }
+            else if (numPlayers < maxPlayers) {
+                players[socket.id] = numPlayers
+                numPlayers++
+                turn--
+                bHands.push(null)
+                socket.emit('addPlayer', numPlayers, bBag, bBoard, bScoreboard, bNames)
+            }
+            else {
+                return
+            }
+        })
 
         socket.on('endTurn', (bagArray, boardArray, scoreboardArray, handArray, turnEnded) => {
             lastValid = turnEnded

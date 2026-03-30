@@ -7,6 +7,7 @@ const ctx = canvas.getContext('2d')
 
 //namespace
 const socket = io()
+socket.emit('joinGame')
 
 //everything size-wise is based on TILE_SIZE for now... (based on innerHeight)
 canvas.height = innerHeight

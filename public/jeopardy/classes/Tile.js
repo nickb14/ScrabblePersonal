@@ -65,7 +65,7 @@ class Tile extends DisplayItem {
             c.fillStyle = COLORS.TEXT
         }
 
-        const fWidth = this.w*0.9
+        const fWidth = this.w*0.8
         //shrinking
         while (this.px > maxPx || c.measureText(this.longLine).width > fWidth + 1) {
             this.px -= 1
@@ -87,12 +87,17 @@ class Tile extends DisplayItem {
      * draws on 2D canvas context
      */
     draw(c) {
+        c.beginPath()
+
         c.fillStyle = COLORS.TILE_BACK
-        c.fillRect(this.x, this.y, this.w, this.h)
+        c.strokeStyle = COLORS.BACKGROUND
+        c.lineWidth = this.w/20
+        c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
+        c.fill()
+        c.stroke()
 
         c.textAlign = "center"
         c.textBaseline = "middle"
-
         this.drawText(c)
     }
 }
