@@ -1,26 +1,39 @@
 /**
  * any tile on the jeopardy board (header, value, clue, with answer, image)
  */
-class Tile extends DisplayItem {
+class Tile extends Button {
     /**
      * type: TILES.HEADER, TILES.VALUE, etc
      * content: string to display
     */
     constructor(type, content) {
         super()
+
+        //text
         this.type = type
-        this.lines = [content]
-
+        this.lines = []
         this.px = 10
+        this.longLine = ""
 
-        if (type == TILES.HEADER) {
+        this.setText(content)
+    }
+
+    /**
+     * sets the text the tile displays
+     */
+    setText(content) {
+        if (content === "")
+            return
+
+        if (this.type == TILES.HEADER) {
             //attempts to have line lengths no longer than 10 characters (10 is arbitrary)
             const maxLines = Math.min(Math.ceil(content.length/10), 3)
             this.splitText(content, maxLines)
-        } else if (type == TILES.CLUE) {
+        } else if (this.type == TILES.TEXT) {
             const maxLines = Math.min(Math.ceil(content.length/30), 5)
             this.splitText(content, maxLines)
         }
+        
         this.longLine = this.lines.reduce((a, b) => a.length > b.length ? a : b)
     }
 
@@ -56,6 +69,9 @@ class Tile extends DisplayItem {
      * has active resizing based on tile dimensions
      */
     drawText(c) {
+        c.textAlign = "center"
+        c.textBaseline = "middle"
+
         c.font = this.px + FONT
         let maxPx = this.h / (this.lines.length+1)
 
@@ -90,14 +106,18 @@ class Tile extends DisplayItem {
         c.beginPath()
 
         c.fillStyle = COLORS.TILE_BACK
-        c.strokeStyle = COLORS.BACKGROUND
-        c.lineWidth = this.w/20
         c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
         c.fill()
-        c.stroke()
 
-        c.textAlign = "center"
-        c.textBaseline = "middle"
+        if (!this.active)
+            return
+
+        if (this.hovering) {
+            c.strokeStyle = COLORS.TEXT
+            c.lineWidth = this.w/100
+            c.stroke()
+        }
+
         this.drawText(c)
     }
 }

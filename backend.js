@@ -37,6 +37,10 @@ app.get('/jeopardy/display', (req, res) => {
   res.sendFile(__dirname + '/public/jeopardy/display/display.html')
 })
 
+app.get('/jeopardy/host', (req, res) => {
+  res.sendFile(__dirname + '/public/jeopardy/host/host.html')
+})
+
 app.get('/jeopardy/player', (req, res) => {
   res.sendFile(__dirname + '/public/jeopardy/player/player.html')
 })

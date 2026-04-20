@@ -8,17 +8,19 @@ class Board extends DisplayItem {
     */
     constructor(data) {
         super()
-        // this.data = data
 
         this.tiles = []
+        this.clues = []
+
         for (let i = 0; i < data.length; i++) {
-            this.tiles.push([])
-            this.tiles[i].push(new Tile(TILES.HEADER, data[i]["category"]))
+            this.tiles.push([new Tile(TILES.HEADER, data[i]["category"])])
             for (let clue of data[i]["clues"]) {
                 this.tiles[i].push(new Tile(TILES.VALUE, clue["value"]))
+                this.clues.push(new Tile(TILES.TEXT, clue["clue"]))
             }
         }
-        console.log(this.tiles) 
+
+        this.currentClue = -1
     }
 
     /**
@@ -27,11 +29,51 @@ class Board extends DisplayItem {
     resize(x, y, w, h) {
         super.resize(x, y, w, h)
 
-        const tileW = w/this.tiles.length
+        const borderRatio = 0.03
+        const tileW = w/this.tiles.length * (1-2*borderRatio)
         for (let i = 0; i < this.tiles.length; i++) {
-            const tileH = h/this.tiles[i].length
+            const tileH = h/this.tiles[i].length * (1-2*borderRatio)
             for (let j = 0; j < this.tiles[i].length; j++) {
-                this.tiles[i][j].resize(x+i*tileW, y+j*tileH, tileW, tileH)
+                const tileX = x + (i+(2*i+1)*borderRatio) * tileW
+                const tileY = y+(j+(2*j+1)*borderRatio)*tileH
+                this.tiles[i][j].resize(tileX, tileY, tileW, tileH)
+            }
+        }
+
+        for (let clue of this.clues)
+            clue.resize(x, y, w, h)
+    }
+
+    /**
+     * sets hovering for each value tile
+     */
+    hover(x, y) {
+        if (this.currentClue != -1) {
+            this.clues[this.currentClue].hover(x, y)
+            return
+        }
+        for (let col of this.tiles) {
+            for (let tile of col.slice(1)) {
+                tile.hover(x, y)
+            }
+        }
+    }
+
+    /**
+     * clicks into clue
+     */
+    click(x, y) {
+        if (this.currentClue != -1) {
+            this.currentClue = -1
+            return
+        }
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 1; j < this.tiles[i].length; j++) {
+                const tile = this.tiles[i][j]
+                if (tile.click(x, y)) {
+                    tile.setActive(false)
+                    this.currentClue = i*(this.tiles[i].length-1) + j-1
+                }
             }
         }
     }
@@ -40,6 +82,10 @@ class Board extends DisplayItem {
      * draws on 2D canvas context
      */
     draw(c) {
+        if (this.currentClue != -1) {
+            this.clues[this.currentClue].draw(c)
+            return
+        }
         for (let col of this.tiles) {
             for (let tile of col) {
                 tile.draw(c)

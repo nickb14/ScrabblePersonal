@@ -3,13 +3,13 @@
 const COLORS = {
     BACKGROUND: "#1a1b1c", //off-black
     TILE_BACK: "#0A2C7D", //blue
-    // BLUE: "#1F4FD8",
     VALUE_TEXT: "#E6B800", //gold
-    // GOLD: "#FFD23F",
     TEXT: "#eef1f4", //off-white
-    GRAY: "#b7bcca",
-    GREEN: "#2ECC71",
-    RED: "#E74C3C",
+    INACTIVE: "#b7bcca", //gray
+    ACTIVE: "#2ECC71", //green
+    // RED: "#E74C3C",
+    // BLUE: "#1F4FD8",
+    // GOLD: "#FFD23F",
 }
 
 const FONT = "px Georgia"
@@ -17,5 +17,5 @@ const FONT = "px Georgia"
 const TILES = {
     HEADER: 1,
     VALUE: 2,
-    CLUE: 3,
+    TEXT: 3,
 }

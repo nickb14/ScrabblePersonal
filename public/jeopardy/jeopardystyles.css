@@ -3,5 +3,10 @@ body {
     margin: 0;
 }
 canvas {
+    position: absolute;
     display: block;
+}
+input {
+    position: absolute;
+    display: none;
 }
