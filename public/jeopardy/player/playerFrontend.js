@@ -25,14 +25,14 @@ function resize() {
     canvas.height = innerHeight * devicePixelRatio
 
     //resize game items
-    buzzer.resize(50, 50, canvas.width*5/10)
-    nameButton.resize(50, 1000, canvas.width*20/100, canvas.height*5/100)
-    teamButton.resize(500, 1000, canvas.width*20/100, canvas.height*5/100)
+    buzzer.resize(50, 50, 1000)
+    nameButton.resize(100, 1100, 400, 100)
+    teamButton.resize(600, 1100, 400, 100)
 
     //resize html elements
-    resizeHTML(nameInput, 50, 1100, canvas.width*20/100, canvas.height*5/100)
-    resizeHTML(teamSelect, 500, 1100, canvas.width*20/100, canvas.height*5/100)
-    resizeHTML(teamInput, 500, 1100, canvas.width*20/100, canvas.height*5/100)
+    resizeHTML(nameInput, 100, 1100, 400, 100)
+    resizeHTML(teamSelect, 600, 1100, 400, 100)
+    resizeHTML(teamInput, 600, 1100, 400, 100)
 }
 resize()
 
@@ -81,8 +81,10 @@ canvas.addEventListener("pointerdown", (event) => {
         socket.emit('buzz')
     if (nameButton.click(x, y))
         promptName()
-    if (teamButton.click(x, y))
+    else if (teamButton.click(x, y))
         promptTeam()
+    else
+        unprompt()
 })
 
 canvas.addEventListener("mousemove", (event) => {
@@ -109,7 +111,8 @@ function promptName() {
     nameButton.setActive(false)
     
     nameInput.style.display = "block"
-    nameInput.addEventListener("keydown", (event) => {
+
+    function onKeydown(event) {
         if (event.key === "Enter") {
             const name = nameInput.value.trim()
             if (name.length !== 0) {
@@ -118,8 +121,10 @@ function promptName() {
             }
             nameInput.style.display = "none"
             nameButton.setActive(true)
+            nameInput.removeEventListener("keydown", onKeydown)
         }
-    })
+    }
+    nameInput.addEventListener("keydown", onKeydown)
 }
 
 //activates the name input html element
@@ -148,11 +153,11 @@ function promptTeam() {
     teamSelect.style.display = "block"
 
     //detect selection
-    teamSelect.addEventListener("change", () => {
+    function onChange() {
         if (teamSelect.value === 'new-team') {
             //detect input for new team
             teamInput.style.display = "block"
-            teamInput.addEventListener("keydown", (event) => {
+            function onKeydown(event) {
                 if (event.key === "Enter") {
                     const team = teamInput.value
                     if (team.length !== 0) {
@@ -161,8 +166,10 @@ function promptTeam() {
                     }
                     teamInput.style.display = "none"
                     teamButton.setActive(true)
+                    teamInput.removeEventListener("keydown", onKeydown)
                 }
-            })
+            }
+            teamInput.addEventListener("keydown", onKeydown)
         }
         else {
             const team = teamSelect.value
@@ -171,5 +178,21 @@ function promptTeam() {
             teamButton.setActive(true)
         }
         teamSelect.style.display = "none"
-    })
+        teamSelect.removeEventListener("change", onChange)
+    }
+    teamSelect.addEventListener("change", onChange)
+}
+
+//hide all input/select, remove event listeners, reactivate buttons
+function unprompt() {
+    nameButton.setActive(true)
+    teamButton.setActive(true)
+
+    nameInput.style.display = "none"
+    teamSelect.style.display = "none"
+    teamInput.style.display = "none"
+    
+    nameInput.removeEventListener("keydown", onKeydown)
+    teamSelect.removeEventListener("change", onChange)
+    teamInput.removeEventListener("keydown", onKeydown)
 }

@@ -17,6 +17,7 @@ function startGame(gameData) {
     //all game items
     const board = new Board(gameData)
     const solutions = new Solutions(gameData)
+    const teamScore = new TeamScore("test 1")
 
     //recalled everytime window is resized
     function resize() {
@@ -29,6 +30,7 @@ function startGame(gameData) {
         //resize game items
         board.resize(50, 50, 1400, 1000)
         solutions.resize(1500, 50, 300, 200)
+        teamScore.resize(50, 1100, 300, 250)
     }
     resize()
 
@@ -40,6 +42,7 @@ function startGame(gameData) {
         //draw game items
         board.draw(ctx)
         solutions.draw(ctx)
+        teamScore.draw(ctx)
 
         requestAnimationFrame(animate)
     }

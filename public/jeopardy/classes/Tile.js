@@ -4,9 +4,10 @@
 class Tile extends Button {
     /**
      * type: TILES.HEADER, TILES.VALUE, etc
-     * content: string to display
+     * content: string or number(value tile) to display
+     * textOnly: special tile, doesn't draw tile background
     */
-    constructor(type, content) {
+    constructor(type, content, textOnly = false) {
         super()
 
         //text
@@ -16,6 +17,7 @@ class Tile extends Button {
         this.longLine = content
 
         this.setText(content)
+        this.textOnly = textOnly
     }
 
     /**
@@ -72,6 +74,15 @@ class Tile extends Button {
     }
 
     /**
+     * gets the value of a value tile
+     */
+    getValue() {
+        if (this.type === TILES.VALUE)
+            return this.longLine
+        return 0
+    }
+
+    /**
      * formats and draws text contained in this.lines
      * has active resizing based on tile dimensions
      */
@@ -112,9 +123,11 @@ class Tile extends Button {
     draw(c) {
         c.beginPath()
 
-        c.fillStyle = COLORS.TILE_BACK
-        c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
-        c.fill()
+        if (!this.textOnly) {
+            c.fillStyle = COLORS.TILE_BACK
+            c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
+            c.fill()
+        }
 
         if (!this.active)
             return
