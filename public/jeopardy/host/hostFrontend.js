@@ -16,6 +16,7 @@ async function loadGame() {
 function startGame(gameData) {
     //all game items
     const board = new Board(gameData)
+    const solutions = new Solutions(gameData)
 
     //recalled everytime window is resized
     function resize() {
@@ -26,7 +27,8 @@ function startGame(gameData) {
         canvas.height = innerHeight * devicePixelRatio
 
         //resize game items
-        board.resize(50, 50, canvas.width*9/10, canvas.height*8/10)
+        board.resize(50, 50, 1400, 1000)
+        solutions.resize(1500, 50, 300, 200)
     }
     resize()
 
@@ -37,6 +39,7 @@ function startGame(gameData) {
 
         //draw game items
         board.draw(ctx)
+        solutions.draw(ctx)
 
         requestAnimationFrame(animate)
     }
@@ -51,7 +54,10 @@ function startGame(gameData) {
         const y = event.offsetY * devicePixelRatio
 
         //click game items
-        board.click(x, y)
+        const index = board.click(x, y)
+        solutions.click(x, y)
+
+        solutions.setCurrentSolution(index)
     })
 
     canvas.addEventListener("mousemove", (event) => {
@@ -60,6 +66,7 @@ function startGame(gameData) {
 
         //hover game items (mouse)
         board.hover(x, y)
+        solutions.hover(x, y)
     })
 }
 

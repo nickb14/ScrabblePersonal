@@ -15,14 +15,19 @@ class Tile extends Button {
         this.px = 10
         this.longLine = content
 
-        if (type != TILES.VALUE)
-            this.setText(content)
+        this.setText(content)
     }
 
     /**
      * sets the text the tile displays
      */
     setText(content) {
+        //if value tile, content == number, keep as one line
+        if (this.type === TILES.VALUE) {
+            this.lines = [content]
+            this.longLine = content
+            return
+        }
         //if only whitespace, treat as nothing
         if (content.trim().length === 0)
             return

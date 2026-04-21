@@ -61,11 +61,12 @@ class Board extends DisplayItem {
 
     /**
      * clicks into clue
+     * returns index of currently displayed clue
      */
     click(x, y) {
-        if (this.currentClue != -1) {
+        if (this.currentClue != -1 && this.clues[this.currentClue].click(x, y)) {
             this.currentClue = -1
-            return
+            return this.currentClue
         }
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 1; j < this.tiles[i].length; j++) {
@@ -76,6 +77,7 @@ class Board extends DisplayItem {
                 }
             }
         }
+        return this.currentClue
     }
 
     /**
