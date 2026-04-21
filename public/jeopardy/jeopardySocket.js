@@ -4,7 +4,7 @@ module.exports = (io) => {
 
     let numPlayers = 0
     const players = {} //socket.id: player name
-    let numTeams = 0
+    // let numTeams = 0
     const teams = {} //team name: [array of player names]
 
     io.on('connection', (socket) => {
@@ -24,6 +24,7 @@ module.exports = (io) => {
                 // teams['Team '+numTeams] = [name]
 
                 socket.emit('setName', name)
+                socket.emit('setTeams', Object.keys(teams))
             }
 
             console.log(players)
@@ -45,18 +46,39 @@ module.exports = (io) => {
                     names[i] = name
             })
             players[socket.id] = name
+
+            console.log(players)
+            console.log(teams)
+        })
+
+        //when player changes teams
+        socket.on('changeTeam', (team) => {
+            const name = players[socket.id]
+            removeFromTeams(name)
+
+            if (Object.keys(teams).includes(team)) {
+                //existing team
+                teams[team].push(name)
+            } else {
+                //new team
+                teams[team] = [name]
+                io.emit('setTeams', Object.keys(teams))
+            }
+            
+            console.log(players)
+            console.log(teams)
+        })
+
+        //when player successfully buzzes in
+        socket.on('buzz', () => {
+            
         })
 
         //when any user disconnects
         socket.on('disconnect', () => {
             //remove player
             if (Object.hasOwn(players, socket.id)) {
-                const name = players[socket.id]
-                Object.values(teams).forEach(names => {
-                    const i = names.indexOf(name)
-                    if (i > -1)
-                        names.splice(i, 1)
-                })
+                removeFromTeams(players[socket.id])
                 delete players[socket.id]
                 numPlayers--
             }
@@ -65,5 +87,13 @@ module.exports = (io) => {
             console.log(teams)
         })
 
+        //helper function
+        function removeFromTeams(name) {
+            Object.values(teams).forEach(names => {
+                const i = names.indexOf(name)
+                if (i > -1)
+                    names.splice(i, 1)
+            })
+        }
     })
 }

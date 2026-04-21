@@ -9,6 +9,8 @@ class Buzzer extends Button {
     constructor() {
         super()
 
+        this.active = false
+
         this.cooldown = 250
         this.onCooldown = false
 
@@ -73,7 +75,7 @@ class Buzzer extends Button {
         c.arc(this.xc, this.yc, this.r, 0, 2*Math.PI)
         c.fill()
 
-        if (this.hovering) {
+        if (this.active && this.hovering) {
             c.strokeStyle = COLORS.TEXT
             c.lineWidth = this.w/100
             c.stroke()

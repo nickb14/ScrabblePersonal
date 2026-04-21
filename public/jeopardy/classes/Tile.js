@@ -11,18 +11,20 @@ class Tile extends Button {
 
         //text
         this.type = type
-        this.lines = []
+        this.lines = [content]
         this.px = 10
-        this.longLine = ""
+        this.longLine = content
 
-        this.setText(content)
+        if (type != TILES.VALUE)
+            this.setText(content)
     }
 
     /**
      * sets the text the tile displays
      */
     setText(content) {
-        if (content === "")
+        //if only whitespace, treat as nothing
+        if (content.trim().length === 0)
             return
 
         if (this.type == TILES.HEADER) {

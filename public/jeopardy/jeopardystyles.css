@@ -10,3 +10,7 @@ input {
     position: absolute;
     display: none;
 }
+select {
+    position: absolute;
+    display: none;
+}
