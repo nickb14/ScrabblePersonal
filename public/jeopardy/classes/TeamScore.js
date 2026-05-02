@@ -8,8 +8,8 @@ class TeamScore extends DisplayItem {
     constructor(team) {
         super()
 
-        this.teamTile = new Tile(TILES.TEXT, team, true)
-        this.scoreTile = new Tile(TILES.VALUE, 0, true)
+        this.teamTile = new Tile(TILES.TEXT, team, {displayBack: false})
+        this.scoreTile = new Tile(TILES.VALUE, 0, {displayBack: false})
         this.players = []
     }
 
@@ -56,9 +56,10 @@ class TeamScore extends DisplayItem {
     draw(c) {
         c.beginPath()
 
-        c.fillStyle = COLORS.TILE_BACK
+        c.strokeStyle = COLORS.INACTIVE
+        c.lineWidth = this.w/100
         c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
-        c.fill()
+        c.stroke()
 
         this.teamTile.draw(c)
         this.scoreTile.draw(c)

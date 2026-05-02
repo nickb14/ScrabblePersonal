@@ -61,12 +61,14 @@ class Board extends DisplayItem {
 
     /**
      * clicks into clue
-     * returns index of currently displayed clue
+     * returns object: {clicked: bool, index: number}
+     *  clicked: true if click was within the bounds of the board
+     *  index: of currently displayed clue
      */
     click(x, y) {
         if (this.currentClue != -1 && this.clues[this.currentClue].click(x, y)) {
             this.currentClue = -1
-            return this.currentClue
+            return {clicked: true, index: this.currentClue}
         }
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 1; j < this.tiles[i].length; j++) {
@@ -74,10 +76,11 @@ class Board extends DisplayItem {
                 if (tile.click(x, y)) {
                     tile.setActive(false)
                     this.currentClue = i*(this.tiles[i].length-1) + j-1
+                    return {clicked: true, index: this.currentClue}
                 }
             }
         }
-        return this.currentClue
+        return {clicked: false, index: this.currentClue}
     }
 
     /**

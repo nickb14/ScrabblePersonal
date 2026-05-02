@@ -18,6 +18,7 @@ function startGame(gameData) {
     const board = new Board(gameData)
     const solutions = new Solutions(gameData)
     const teamScore = new TeamScore("test 1")
+    let mouseX = 0, mouseY = 0
 
     //recalled everytime window is resized
     function resize() {
@@ -39,6 +40,10 @@ function startGame(gameData) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.fillStyle = COLORS.VALUE_TEXT
 
+        //hover game items (mouse)
+        board.hover(mouseX, mouseY)
+        solutions.hover(mouseX, mouseY)
+
         //draw game items
         board.draw(ctx)
         solutions.draw(ctx)
@@ -57,19 +62,19 @@ function startGame(gameData) {
         const y = event.offsetY * devicePixelRatio
 
         //click game items
-        const index = board.click(x, y)
+        const {clicked, index} = board.click(x, y)
         solutions.click(x, y)
 
+        if (clicked)
+            socket.emit('setBuzzers', index > -1)
         solutions.setCurrentSolution(index)
     })
 
-    canvas.addEventListener("mousemove", (event) => {
-        const x = event.offsetX * devicePixelRatio
-        const y = event.offsetY * devicePixelRatio
-
-        //hover game items (mouse)
-        board.hover(x, y)
-        solutions.hover(x, y)
+    canvas.addEventListener("pointermove", (event) => {
+        if (event.pointerType === "mouse") {
+            mouseX = event.offsetX * devicePixelRatio
+            mouseY = event.offsetY * devicePixelRatio
+        }
     })
 }
 

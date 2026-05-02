@@ -5,7 +5,7 @@ module.exports = (io) => {
     let numPlayers = 0
     const players = {} //socket.id: player name
     // let numTeams = 0
-    const teams = {} //team name: [array of player names]
+    const teams = {} //team name: [array of player ids]
 
     io.on('connection', (socket) => {
         //when display, host, or player page opened
@@ -38,13 +38,6 @@ module.exports = (io) => {
                 socket.emit('setName', players[socket.id])
                 return
             }
-            //change name, including on team
-            const oldName = players[socket.id]
-            Object.values(teams).forEach(names => {
-                const i = names.indexOf(oldName)
-                if (i > -1)
-                    names[i] = name
-            })
             players[socket.id] = name
 
             console.log(players)
@@ -53,15 +46,14 @@ module.exports = (io) => {
 
         //when player changes teams
         socket.on('changeTeam', (team) => {
-            const name = players[socket.id]
-            removeFromTeams(name)
+            removeFromTeams(socket.id)
 
             if (Object.keys(teams).includes(team)) {
                 //existing team
-                teams[team].push(name)
+                teams[team].push(socket.id)
             } else {
                 //new team
-                teams[team] = [name]
+                teams[team] = [socket.id]
                 io.emit('setTeams', Object.keys(teams))
             }
             
@@ -71,14 +63,19 @@ module.exports = (io) => {
 
         //when player successfully buzzes in
         socket.on('buzz', () => {
-            
+            io.emit('buzzed', players[socket.id])
+        })
+
+        //when host sets buzzers active/deactive
+        socket.on('setBuzzers', (active) => {
+            io.emit('setBuzzer', active)
         })
 
         //when any user disconnects
         socket.on('disconnect', () => {
             //remove player
             if (Object.hasOwn(players, socket.id)) {
-                removeFromTeams(players[socket.id])
+                removeFromTeams(socket.id)
                 delete players[socket.id]
                 numPlayers--
             }
@@ -88,11 +85,11 @@ module.exports = (io) => {
         })
 
         //helper function
-        function removeFromTeams(name) {
-            Object.values(teams).forEach(names => {
-                const i = names.indexOf(name)
+        function removeFromTeams(id) {
+            Object.values(teams).forEach(ids => {
+                const i = ids.indexOf(id)
                 if (i > -1)
-                    names.splice(i, 1)
+                    ids.splice(i, 1)
             })
         }
     })

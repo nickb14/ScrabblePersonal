@@ -5,19 +5,24 @@ class Tile extends Button {
     /**
      * type: TILES.HEADER, TILES.VALUE, etc
      * content: string or number(value tile) to display
-     * textOnly: special tile, doesn't draw tile background
+     * displayBack: if false, doesn't draw tile background
+     * backColor: for different tile background color than default
     */
-    constructor(type, content, textOnly = false) {
+    constructor(type, content, {displayBack = true, backColor = COLORS.TILE_BACK} = {}) {
         super()
 
-        //text
         this.type = type
+
+        //text
         this.lines = [content]
         this.px = 10
         this.longLine = content
 
         this.setText(content)
-        this.textOnly = textOnly
+
+        //tile back
+        this.displayBack = displayBack
+        this.backColor = backColor
     }
 
     /**
@@ -83,6 +88,13 @@ class Tile extends Button {
     }
 
     /**
+     * sets whether tile back is displayed
+     */
+    setDisplayBack(displayBack) {
+        this.displayBack = displayBack
+    }
+
+    /**
      * formats and draws text contained in this.lines
      * has active resizing based on tile dimensions
      */
@@ -123,8 +135,8 @@ class Tile extends Button {
     draw(c) {
         c.beginPath()
 
-        if (!this.textOnly) {
-            c.fillStyle = COLORS.TILE_BACK
+        if (this.displayBack) {
+            c.fillStyle = this.backColor
             c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
             c.fill()
         }

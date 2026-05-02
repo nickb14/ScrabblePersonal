@@ -15,6 +15,7 @@ const buzzer = new Buzzer()
 const nameButton = new Tile(TILES.TEXT, "Enter name...")
 const teamButton = new Tile(TILES.TEXT, "Select team...")
 let teams = []
+let mouseX = 0, mouseY = 0
 
 //recalled everytime window is resized
 function resize() {
@@ -40,6 +41,11 @@ resize()
 function animate(currentTime) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = COLORS.VALUE_TEXT
+
+    //hover game items (mouse)
+    buzzer.hover(mouseX, mouseY)
+    nameButton.hover(mouseX, mouseY)
+    teamButton.hover(mouseX, mouseY)
 
     //draw game items
     buzzer.draw(ctx)
@@ -87,14 +93,11 @@ canvas.addEventListener("pointerdown", (event) => {
         unprompt()
 })
 
-canvas.addEventListener("mousemove", (event) => {
-    const x = event.offsetX * devicePixelRatio
-    const y = event.offsetY * devicePixelRatio
-
-    //hover game items (mouse)
-    buzzer.hover(x, y)
-    nameButton.hover(x, y)
-    teamButton.hover(x, y)
+canvas.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "mouse") {
+            mouseX = event.offsetX * devicePixelRatio
+            mouseY = event.offsetY * devicePixelRatio
+        }
 })
 
 //------------------------------ INPUT/SELECT FUNCTIONS -----------------------------
