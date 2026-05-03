@@ -12,8 +12,8 @@ socket.emit('joinGame', 'player')
 
 //all game items
 const buzzer = new Buzzer()
-const nameButton = new Tile(TILES.TEXT, "Enter name...")
-const teamButton = new Tile(TILES.TEXT, "Select team...")
+const nameButton = new Tile("Enter name...")
+const teamButton = new Tile("Select team...")
 let teams = []
 let mouseX = 0, mouseY = 0
 
@@ -40,7 +40,6 @@ resize()
 //called every frame, draws!
 function animate(currentTime) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = COLORS.VALUE_TEXT
 
     //hover game items (mouse)
     buzzer.hover(mouseX, mouseY)

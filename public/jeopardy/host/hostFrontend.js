@@ -48,7 +48,6 @@ function startGame(gameData) {
     //called every frame, draws!
     function animate(currentTime) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.fillStyle = COLORS.VALUE_TEXT
 
         //hover game items (mouse)
         board.hover(mouseX, mouseY)

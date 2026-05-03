@@ -13,10 +13,10 @@ class Board extends DisplayItem {
         this.clues = []
 
         for (let i = 0; i < data.length; i++) {
-            this.tiles.push([new Tile(TILES.HEADER, data[i]["category"])])
+            this.tiles.push([new Tile(data[i]["category"], {lineLength: 10})])
             for (let clue of data[i]["clues"]) {
-                this.tiles[i].push(new Tile(TILES.VALUE, clue["value"]))
-                this.clues.push(new Tile(TILES.TEXT, clue["clue"]))
+                this.tiles[i].push(new Tile(clue["value"], {textColor: COLORS.GOLD}))
+                this.clues.push(new Tile(clue["clue"]))
             }
         }
 

@@ -34,7 +34,6 @@ function startGame(gameData) {
     //called every frame, draws!
     function animate(currentTime) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.fillStyle = COLORS.VALUE_TEXT
 
         //draw game items
         board.draw(ctx)

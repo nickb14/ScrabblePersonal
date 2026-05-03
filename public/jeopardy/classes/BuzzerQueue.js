@@ -10,8 +10,8 @@ class BuzzerQueue extends DisplayItem {
     constructor() {
         super()
 
-        this.correctTile = new Tile(TILES.TEXT, "correct", {backColor: COLORS.VALUE_TEXT})
-        this.incorrectTile = new Tile(TILES.TEXT, "incorrect", {backColor: COLORS.INACTIVE})
+        this.correctTile = new Tile("correct", {textColor: COLORS.BLACK, backColor: COLORS.GOLD})
+        this.incorrectTile = new Tile("incorrect", {textColor: COLORS.BLACK, backColor: COLORS.GRAY})
         this.playerTiles = []
         this.maxDisplayed = 5
     }
@@ -41,7 +41,7 @@ class BuzzerQueue extends DisplayItem {
      * push to end of queue
      */
     push(player) {
-        this.playerTiles.push(new Tile(TILES.TEXT, player, {displayBack: false}))
+        this.playerTiles.push(new Tile(player, {displayBack: false}))
         this.playerTiles[0].setDisplayBack(true)
         this.resize(this.x, this.y, this.w, this.h)
     }
@@ -61,7 +61,7 @@ class BuzzerQueue extends DisplayItem {
     draw(c) {
         c.beginPath()
 
-        c.strokeStyle = COLORS.INACTIVE
+        c.strokeStyle = COLORS.GRAY
         c.lineWidth = this.w/100
         c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
         c.stroke()

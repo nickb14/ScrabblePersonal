@@ -9,13 +9,13 @@ class Solutions extends DisplayItem {
     constructor(data) {
         super()
 
-        this.hideTile = new Tile(TILES.TEXT, "Hide solutions")
-        this.showTile = new Tile(TILES.TEXT, "Show solutions")
+        this.hideTile = new Tile("Hide solutions")
+        this.showTile = new Tile("Show solutions")
 
         this.solutions = []
         for (let category of data)
             for (let clue of category["clues"])
-                this.solutions.push(new Tile(TILES.TEXT, clue["solution"]))
+                this.solutions.push(new Tile(clue["solution"]))
 
         this.currentSolution = -1
         this.currentTile = this.hideTile

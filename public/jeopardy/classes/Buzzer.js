@@ -68,15 +68,15 @@ class Buzzer extends Button {
         c.beginPath()
 
         if (this.active && !this.onCooldown)
-            c.fillStyle = COLORS.ACTIVE
+            c.fillStyle = COLORS.GREEN
         else
-            c.fillStyle = COLORS.INACTIVE
+            c.fillStyle = COLORS.GRAY
 
         c.arc(this.xc, this.yc, this.r, 0, 2*Math.PI)
         c.fill()
 
         if (this.active && this.hovering) {
-            c.strokeStyle = COLORS.TEXT
+            c.strokeStyle = COLORS.WHITE
             c.lineWidth = this.w/100
             c.stroke()
         }

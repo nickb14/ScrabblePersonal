@@ -1,20 +1,28 @@
 /**
- * any tile on the jeopardy board (header, value, clue, with answer, image)
+ * any tile on the jeopardy board (header, value, clue, with answer, image?)
  */
 class Tile extends Button {
     /**
-     * type: TILES.HEADER, TILES.VALUE, etc
      * content: string or number(value tile) to display
+     * textColor: for different fill text color than default white
+     * lineLength: attempts to display lines of maximum this many characters
+     * backColor: for different tile background color than default blue
      * displayBack: if false, doesn't draw tile background
-     * backColor: for different tile background color than default
     */
-    constructor(type, content, {displayBack = true, backColor = COLORS.TILE_BACK} = {}) {
+    constructor(content, {textColor=COLORS.WHITE, lineLength=30, backColor=COLORS.BLUE, displayBack=true} = {}) {
         super()
 
-        this.type = type
+        //value
+        this.value = parseFloat(content)
+        if (!isFinite(this.value))
+            this.value = 0
+        content = content.toString()
 
         //text
         this.px = 10
+        this.textColor = textColor
+        this.lineLength = lineLength
+        
         this.lines = [content]
         this.longLine = content
 
@@ -27,26 +35,16 @@ class Tile extends Button {
 
     /**
      * sets the text the tile displays
+     * content: string
      */
     setText(content) {
-        //if value tile, content == number, keep as one line
-        if (this.type === TILES.VALUE) {
-            this.lines = [content]
-            this.longLine = content
-            return
-        }
         //if only whitespace, treat as nothing
         if (content.trim().length === 0)
             return
 
-        if (this.type == TILES.HEADER) {
-            //attempts to have line lengths no longer than 10 characters (10 is arbitrary)
-            const maxLines = Math.min(Math.ceil(content.length/10), 3)
-            this.splitText(content, maxLines)
-        } else if (this.type == TILES.TEXT) {
-            const maxLines = Math.min(Math.ceil(content.length/30), 5)
-            this.splitText(content, maxLines)
-        }
+        //attempts max this.lineLength character lines; hard caps 5 lines total (arbitrary)
+        const maxLines = Math.min(Math.ceil(content.length/this.lineLength), 5)
+        this.splitText(content, maxLines)
         
         this.longLine = this.lines.reduce((a, b) => a.length > b.length ? a : b)
     }
@@ -82,9 +80,7 @@ class Tile extends Button {
      * gets the value of a value tile
      */
     getValue() {
-        if (this.type === TILES.VALUE)
-            return this.longLine
-        return 0
+        return this.value
     }
 
     /**
@@ -105,20 +101,7 @@ class Tile extends Button {
         c.font = this.px + FONT
         let maxPx = this.h / (this.lines.length+1)
 
-        function isLight(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return (r * 0.299 + g * 0.587 + b * 0.114) > 128;
-        }
-
-        if (this.type == TILES.VALUE) {
-            c.fillStyle = COLORS.VALUE_TEXT
-        } else if (isLight(this.backColor) && this.displayBack) {
-            c.fillStyle = COLORS.BACKGROUND
-        } else {
-            c.fillStyle = COLORS.TEXT
-        }
+        c.fillStyle = this.textColor
 
         const fWidth = this.w*0.8
         //shrinking
@@ -154,7 +137,7 @@ class Tile extends Button {
             return
 
         if (this.hovering) {
-            c.strokeStyle = COLORS.TEXT
+            c.strokeStyle = COLORS.WHITE
             c.lineWidth = this.w/100
             c.stroke()
         }
