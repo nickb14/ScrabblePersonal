@@ -15,10 +15,19 @@ async function loadGame() {
 //run game, everything that needs gameData 
 function startGame(gameData) {
     //all game items
+    let mouseX = 0, mouseY = 0
     const board = new Board(gameData)
     const solutions = new Solutions(gameData)
     const teamScore = new TeamScore("test 1")
-    let mouseX = 0, mouseY = 0
+    const buzzerQueue = new BuzzerQueue()
+    buzzerQueue.push("name 1")
+    buzzerQueue.push("name 2")
+    buzzerQueue.push("name 3")
+    buzzerQueue.pop()
+    buzzerQueue.push("name 4")
+    buzzerQueue.push("name 5")
+    buzzerQueue.push("name 6")
+    buzzerQueue.push("name 7")
 
     //recalled everytime window is resized
     function resize() {
@@ -32,6 +41,7 @@ function startGame(gameData) {
         board.resize(50, 50, 1400, 1000)
         solutions.resize(1500, 50, 300, 200)
         teamScore.resize(50, 1100, 300, 250)
+        buzzerQueue.resize(1500, 300, 300, 500)
     }
     resize()
 
@@ -48,6 +58,7 @@ function startGame(gameData) {
         board.draw(ctx)
         solutions.draw(ctx)
         teamScore.draw(ctx)
+        buzzerQueue.draw(ctx)
 
         requestAnimationFrame(animate)
     }

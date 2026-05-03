@@ -7,7 +7,7 @@ const COLORS = {
     TEXT: "#eef1f4", //off-white
     INACTIVE: "#b7bcca", //gray
     ACTIVE: "#2ECC71", //green
-    // RED: "#E74C3C",
+    INCORRECT: "#E74C3C", //red
     // BLUE: "#1F4FD8",
     // GOLD: "#FFD23F",
 }

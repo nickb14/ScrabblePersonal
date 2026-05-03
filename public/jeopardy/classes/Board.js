@@ -35,7 +35,7 @@ class Board extends DisplayItem {
             const tileH = h/this.tiles[i].length * (1-2*borderRatio)
             for (let j = 0; j < this.tiles[i].length; j++) {
                 const tileX = x + (i+(2*i+1)*borderRatio) * tileW
-                const tileY = y+(j+(2*j+1)*borderRatio)*tileH
+                const tileY = y + (j+(2*j+1)*borderRatio) * tileH
                 this.tiles[i][j].resize(tileX, tileY, tileW, tileH)
             }
         }

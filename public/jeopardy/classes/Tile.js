@@ -14,8 +14,8 @@ class Tile extends Button {
         this.type = type
 
         //text
-        this.lines = [content]
         this.px = 10
+        this.lines = [content]
         this.longLine = content
 
         this.setText(content)
@@ -105,8 +105,17 @@ class Tile extends Button {
         c.font = this.px + FONT
         let maxPx = this.h / (this.lines.length+1)
 
+        function isLight(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return (r * 0.299 + g * 0.587 + b * 0.114) > 128;
+        }
+
         if (this.type == TILES.VALUE) {
             c.fillStyle = COLORS.VALUE_TEXT
+        } else if (isLight(this.backColor) && this.displayBack) {
+            c.fillStyle = COLORS.BACKGROUND
         } else {
             c.fillStyle = COLORS.TEXT
         }
