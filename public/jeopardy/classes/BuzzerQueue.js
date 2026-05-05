@@ -12,8 +12,11 @@ class BuzzerQueue extends DisplayItem {
 
         this.correctTile = new Tile("correct", {textColor: COLORS.BLACK, backColor: COLORS.GOLD})
         this.incorrectTile = new Tile("incorrect", {textColor: COLORS.BLACK, backColor: COLORS.GRAY})
+
         this.playerTiles = []
         this.maxDisplayed = 5
+
+        this.teams = []
     }
 
     /**
@@ -40,10 +43,12 @@ class BuzzerQueue extends DisplayItem {
     /**
      * push to end of queue
      */
-    push(player) {
+    push(player, team) {
         this.playerTiles.push(new Tile(player, {displayBack: false}))
         this.playerTiles[0].setDisplayBack(true)
         this.resize(this.x, this.y, this.w, this.h)
+
+        this.teams.push(team)
     }
 
     /**
@@ -53,6 +58,9 @@ class BuzzerQueue extends DisplayItem {
         this.playerTiles.shift()
         if (this.playerTiles.length > 0)
             this.playerTiles[0].setDisplayBack(true)
+        this.resize(this.x, this.y, this.w, this.h)
+
+        this.teams.shift()
     }
 
     /**
@@ -60,6 +68,37 @@ class BuzzerQueue extends DisplayItem {
      */
     clear() {
         this.playerTiles.length = 0
+        this.teams.length = 0
+    }
+
+    /**
+     * sets hovering for correct and incorrect tiles
+     */
+    hover(x, y) {
+        if (this.playerTiles.length !== 0) {
+            this.correctTile.hover(x, y)
+            this.incorrectTile.hover(x, y)
+        }
+    }
+
+    /**
+     * returns object: {clicked: bool, correct: bool, team: string}
+     *  clicked: true if click on either button
+     *  correct: true if 'correct' button clicked
+     *  team: team that the active player is on
+     */
+    click(x, y) {
+        if (this.playerTiles.length !== 0) {
+            const team = this.teams[0]
+            if (this.correctTile.click(x, y)) {
+                return {clicked: true, correct: true, team}
+            } else if (this.incorrectTile.click(x, y)) {
+                this.pop()
+                return {clicked: true, correct: false, team}
+            }
+            return {clicked: false}
+        }
+        return {clicked: false}
     }
 
     /**
@@ -69,8 +108,8 @@ class BuzzerQueue extends DisplayItem {
         c.beginPath()
 
         c.strokeStyle = COLORS.GRAY
-        c.lineWidth = Math.min(this.w, this.h)/100
-        c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
+        c.lineWidth = this.borderWidth
+        c.roundRect(this.x, this.y, this.w, this.h, this.cornerRadii)
         c.stroke()
 
         if (this.playerTiles.length === 0)

@@ -45,6 +45,30 @@ class Board extends DisplayItem {
     }
 
     /**
+     * gets value of current clue, 0 if no current
+     */
+    getValue() {
+        if (this.currentClue != -1) {
+            let clue = 0
+            for (let i = 0; i < this.tiles.length; i++) {
+                for (let j = 1; j < this.tiles[i].length; j++) {
+                    if (clue == this.currentClue)
+                        return this.tiles[i][j].getValue()
+                    clue++
+                }
+            }
+        }
+        return 0
+    }
+
+    /**
+     * sets no active clue displaying
+     */
+    returnToBoard() {
+        this.currentClue = -1
+    }
+
+    /**
      * sets hovering for each value tile
      */
     hover(x, y) {
@@ -70,14 +94,16 @@ class Board extends DisplayItem {
             this.currentClue = -1
             return {clicked: true, index: this.currentClue}
         }
+        let clue = 0
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 1; j < this.tiles[i].length; j++) {
                 const tile = this.tiles[i][j]
                 if (tile.click(x, y)) {
                     tile.setActive(false)
-                    this.currentClue = i*(this.tiles[i].length-1) + j-1
+                    this.currentClue = clue
                     return {clicked: true, index: this.currentClue}
                 }
+                clue++
             }
         }
         return {clicked: false, index: this.currentClue}

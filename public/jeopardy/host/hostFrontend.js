@@ -45,6 +45,7 @@ function startGame(gameData) {
         //hover game items (mouse)
         board.hover(mouseX, mouseY)
         solutions.hover(mouseX, mouseY)
+        buzzerQueue.hover(mouseX, mouseY)
 
         //draw game items
         board.draw(ctx)
@@ -58,8 +59,8 @@ function startGame(gameData) {
 
     //------------------------------ SOCKET CALLS -----------------------------
 
-    socket.on('buzzed', (name) => {
-        buzzerQueue.push(name)
+    socket.on('buzzed', (name, team) => {
+        buzzerQueue.push(name, team)
     })
 
     socket.on('setTeams', (teams) => {
@@ -75,13 +76,25 @@ function startGame(gameData) {
         const y = event.offsetY * devicePixelRatio
 
         //click game items
-        const {clicked, index} = board.click(x, y)
+        let {clicked: boardClicked, index} = board.click(x, y)
         solutions.click(x, y)
+        const {clicked: queueClicked, correct, team} = buzzerQueue.click(x, y)
 
-        if (clicked) {
+        //handle clicks...
+        if (boardClicked) {
             if (index > -1)
                 buzzerQueue.clear()
             socket.emit('setBuzzers', index > -1)
+        }
+        if (queueClicked) {
+            const points = board.getValue()
+            if (correct) {
+                scoreboard.addScore(points, team)
+                board.returnToBoard()
+                index = -1
+            } else {
+                scoreboard.addScore(-points, team)
+            }
         }
         solutions.setCurrentSolution(index)
     })

@@ -77,7 +77,7 @@ class Buzzer extends Button {
 
         if (this.active && this.hovering) {
             c.strokeStyle = COLORS.WHITE
-            c.lineWidth = this.w/100
+            c.lineWidth = this.borderWidth
             c.stroke()
         }
     }

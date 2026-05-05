@@ -59,7 +59,7 @@ module.exports = (io) => {
 
         //when player successfully buzzes in
         socket.on('buzz', () => {
-            io.emit('buzzed', players[socket.id])
+            io.emit('buzzed', players[socket.id], getTeam(socket.id))
         })
 
         //when host sets buzzers active/deactive
@@ -78,12 +78,22 @@ module.exports = (io) => {
         })
 
         //-------------------- helper functions --------------------
+        //removes id from all teams
         function removeFromTeams(id) {
             Object.values(teams).forEach(ids => {
                 const i = ids.indexOf(id)
                 if (i > -1)
                     ids.splice(i, 1)
             })
+        }
+
+        //returns last team id is on, or null
+        function getTeam(id) {
+            for (const team in teams) {
+                if (teams[team].includes(id))
+                    return team
+            }
+            return null
         }
     })
 }

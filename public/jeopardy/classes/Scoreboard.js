@@ -48,6 +48,16 @@ class Scoreboard extends DisplayItem {
     }
 
     /**
+     * adds points to team score
+     */
+    addScore(points, team) {
+        for (let teamScore of this.teamScores) {
+            if (team === teamScore.getTeamName())
+                teamScore.addScore(points)
+        }
+    }
+
+    /**
      * draws on 2D canvas context
      */
     draw(c) {

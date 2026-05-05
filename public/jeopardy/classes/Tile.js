@@ -140,7 +140,7 @@ class Tile extends Button {
 
         if (this.displayBack) {
             c.fillStyle = this.backColor
-            c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
+            c.roundRect(this.x, this.y, this.w, this.h, this.cornerRadii)
             c.fill()
         }
 
@@ -149,7 +149,7 @@ class Tile extends Button {
 
         if (this.hovering) {
             c.strokeStyle = COLORS.WHITE
-            c.lineWidth = Math.min(this.w, this.h)/100
+            c.lineWidth = this.borderWidth
             c.stroke()
         }
 

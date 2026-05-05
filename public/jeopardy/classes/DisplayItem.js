@@ -11,6 +11,8 @@ class DisplayItem {
         this.y = 0
         this.w = 0
         this.h = 0
+        this.borderWidth = 0
+        this.cornerRadii = 0
     }
 
     /**
@@ -21,6 +23,8 @@ class DisplayItem {
         this.y = y
         this.w = w
         this.h = h
+        this.borderWidth = Math.min(w, h)/100
+        this.cornerRadii = Math.min(w, h)/20
     }
 
 }
