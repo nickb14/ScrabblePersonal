@@ -6,6 +6,7 @@ module.exports = (io) => {
     const players = {} //socket.id: player name
     // let numTeams = 0
     const teams = {} //team name: [array of player ids]
+    // const buzzerQueue = []
 
     io.on('connection', (socket) => {
         //when display, host, or player page opened
@@ -26,9 +27,10 @@ module.exports = (io) => {
                 socket.emit('setName', name)
                 socket.emit('setTeams', Object.keys(teams))
             }
-
-            console.log(players)
-            console.log(teams)
+            //add host
+            if (type === 'host') {
+                socket.emit('setTeams', Object.keys(teams))
+            }
         })
 
         //when player changes name
@@ -39,9 +41,6 @@ module.exports = (io) => {
                 return
             }
             players[socket.id] = name
-
-            console.log(players)
-            console.log(teams)
         })
 
         //when player changes teams
@@ -56,9 +55,6 @@ module.exports = (io) => {
                 teams[team] = [socket.id]
                 io.emit('setTeams', Object.keys(teams))
             }
-            
-            console.log(players)
-            console.log(teams)
         })
 
         //when player successfully buzzes in
@@ -79,12 +75,9 @@ module.exports = (io) => {
                 delete players[socket.id]
                 numPlayers--
             }
-            
-            console.log(players)
-            console.log(teams)
         })
 
-        //helper function
+        //-------------------- helper functions --------------------
         function removeFromTeams(id) {
             Object.values(teams).forEach(ids => {
                 const i = ids.indexOf(id)

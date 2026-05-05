@@ -23,10 +23,10 @@ class TeamScore extends DisplayItem {
     }
 
     /**
-     * changes team name
+     * returns team name
      */
-    setTeamName(team) {
-        this.teamTile.setText(team)
+    getTeamName() {
+        return this.teamTile.getContent()
     }
 
     /**
@@ -40,7 +40,7 @@ class TeamScore extends DisplayItem {
      * directly sets score
      */
     setScore(points) {
-        this.scoreTile.setText(points)
+        this.scoreTile.setContent(points)
     }
 
      /**
@@ -57,7 +57,7 @@ class TeamScore extends DisplayItem {
         c.beginPath()
 
         c.strokeStyle = COLORS.GRAY
-        c.lineWidth = this.w/100
+        c.lineWidth = Math.min(this.w, this.h)/100
         c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
         c.stroke()
 

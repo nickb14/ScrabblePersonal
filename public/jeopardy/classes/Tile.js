@@ -12,21 +12,16 @@ class Tile extends Button {
     constructor(content, {textColor=COLORS.WHITE, lineLength=30, backColor=COLORS.BLUE, displayBack=true} = {}) {
         super()
 
-        //value
-        this.value = parseFloat(content)
-        if (!isFinite(this.value))
-            this.value = 0
-        content = content.toString()
-
         //text
         this.px = 10
         this.textColor = textColor
         this.lineLength = lineLength
         
-        this.lines = [content]
-        this.longLine = content
-
-        this.setText(content)
+        //this.value
+        //this.content
+        //this.lines
+        //this.longLine
+        this.setContent(content)
 
         //tile back
         this.displayBack = displayBack
@@ -34,17 +29,26 @@ class Tile extends Button {
     }
 
     /**
-     * sets the text the tile displays
-     * content: string
+     * sets the text/value the tile displays
+     * this.value, this.lines, this.longLine
      */
-    setText(content) {
+    setContent(content) {
+        //value
+        this.value = parseFloat(content)
+        if (!isFinite(this.value))
+            this.value = 0
+
+        this.content = content.toString()
+        this.lines = [this.content]
+        this.longLine = this.content
+
         //if only whitespace, treat as nothing
-        if (content.trim().length === 0)
+        if (this.content.trim().length === 0)
             return
 
         //attempts max this.lineLength character lines; hard caps 5 lines total (arbitrary)
-        const maxLines = Math.min(Math.ceil(content.length/this.lineLength), 5)
-        this.splitText(content, maxLines)
+        const maxLines = Math.min(Math.ceil(this.content.length/this.lineLength), 5)
+        this.splitText(maxLines)
         
         this.longLine = this.lines.reduce((a, b) => a.length > b.length ? a : b)
     }
@@ -53,11 +57,11 @@ class Tile extends Button {
      * attempts to split content into this.lines
      * results in number of lines <= maxLines
      */
-    splitText(content, maxLines) {
-        const words = content.split(" ")
+    splitText(maxLines) {
+        const words = this.content.split(" ")
         this.lines = Array(maxLines).fill("")
 
-        const totalLength = content.length
+        const totalLength = this.content.length
         const targetLength = totalLength / maxLines
 
         let i = 0
@@ -77,7 +81,14 @@ class Tile extends Button {
     }
 
     /**
-     * gets the value of a value tile
+     * gets content of a tile as a single string
+     */
+    getContent() {
+        return this.content
+    }
+
+    /**
+     * gets the value of a value tile (number)
      */
     getValue() {
         return this.value
@@ -138,7 +149,7 @@ class Tile extends Button {
 
         if (this.hovering) {
             c.strokeStyle = COLORS.WHITE
-            c.lineWidth = this.w/100
+            c.lineWidth = Math.min(this.w, this.h)/100
             c.stroke()
         }
 

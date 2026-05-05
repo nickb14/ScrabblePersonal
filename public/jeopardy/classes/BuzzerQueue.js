@@ -56,22 +56,32 @@ class BuzzerQueue extends DisplayItem {
     }
 
     /**
+     * clears queue
+     */
+    clear() {
+        this.playerTiles.length = 0
+    }
+
+    /**
      * draws on 2D canvas context
      */
     draw(c) {
         c.beginPath()
 
         c.strokeStyle = COLORS.GRAY
-        c.lineWidth = this.w/100
+        c.lineWidth = Math.min(this.w, this.h)/100
         c.roundRect(this.x, this.y, this.w, this.h, this.w/20)
         c.stroke()
 
+        if (this.playerTiles.length === 0)
+            c.globalAlpha = 0.5
         this.correctTile.draw(c)
         this.incorrectTile.draw(c)
         for (let i = 0; i < this.playerTiles.length && i < this.maxDisplayed; i++) {
             this.playerTiles[i].draw(c)
             c.globalAlpha -= 1/this.maxDisplayed
         }
+
         c.globalAlpha = 1.0
     }
 }

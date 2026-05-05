@@ -38,6 +38,7 @@ class Solutions extends DisplayItem {
      * sets dimensions
      */
     resize(x, y, w, h) {
+        super.resize(x, y, w, h)
         this.hideTile.resize(x, y, w, h)
         this.showTile.resize(x, y, w, h)
         for (let sol of this.solutions)

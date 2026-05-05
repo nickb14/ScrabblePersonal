@@ -58,11 +58,11 @@ animate()
 //------------------------------ SOCKET CALLS -----------------------------
 
 socket.on('setName', (name) => {
-    nameButton.setText(name)
+    nameButton.setContent(name)
 })
 
 socket.on('setTeam', (team) => {
-    teamButton.setText(team)
+    teamButton.setContent(team)
 })
 
 socket.on('setTeams', (newTeams) => {
@@ -118,7 +118,7 @@ function promptName() {
         if (event.key === "Enter") {
             const name = nameInput.value.trim()
             if (name.length !== 0) {
-                nameButton.setText(name)
+                nameButton.setContent(name)
                 socket.emit('changeName', name)
             }
             nameInput.style.display = "none"
@@ -163,7 +163,7 @@ function promptTeam() {
                 if (event.key === "Enter") {
                     const team = teamInput.value
                     if (team.length !== 0) {
-                        teamButton.setText(team)
+                        teamButton.setContent(team)
                         socket.emit('changeTeam', team)
                     }
                     teamInput.style.display = "none"
@@ -175,7 +175,7 @@ function promptTeam() {
         }
         else {
             const team = teamSelect.value
-            teamButton.setText(team)
+            teamButton.setContent(team)
             socket.emit('changeTeam', team)
             teamButton.setActive(true)
         }
