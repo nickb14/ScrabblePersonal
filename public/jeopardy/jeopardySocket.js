@@ -5,7 +5,7 @@ module.exports = (io) => {
     let numPlayers = 0
     const players = {} //socket.id: player name
     // let numTeams = 0
-    const teams = {} //team name: [array of player ids]
+    const teams = {} //team name: [array of player names]
     // const buzzerQueue = []
 
     io.on('connection', (socket) => {
@@ -25,41 +25,50 @@ module.exports = (io) => {
                 // teams['Team '+numTeams] = [name]
 
                 socket.emit('setName', name)
-                socket.emit('setTeams', Object.keys(teams))
+                socket.emit('setTeams', teams)
             }
             //add host
             if (type === 'host') {
-                socket.emit('setTeams', Object.keys(teams))
+                socket.emit('setTeams', teams)
             }
         })
 
         //when player changes name
         socket.on('changeName', (name) => {
             //duplicate name
+            prevName = players[socket.id]
             if (Object.values(players).includes(name)) {
-                socket.emit('setName', players[socket.id])
+                socket.emit('setName', prevName)
                 return
             }
             players[socket.id] = name
+            for (const names of Object.values(teams)) {
+                const i = names.indexOf(prevName)
+                if (i > -1)
+                    names[i] = name
+            }
+
+            io.emit('setTeams', teams)
         })
 
         //when player changes teams
         socket.on('changeTeam', (team) => {
-            removeFromTeams(socket.id)
+            const name = players[socket.id]
+            removeFromTeams(name)
 
             if (Object.keys(teams).includes(team)) {
                 //existing team
-                teams[team].push(socket.id)
+                teams[team].push(name)
             } else {
                 //new team
-                teams[team] = [socket.id]
-                io.emit('setTeams', Object.keys(teams))
+                teams[team] = [name]
             }
+            io.emit('setTeams', teams)
         })
 
         //when player successfully buzzes in
         socket.on('buzz', () => {
-            io.emit('buzzed', players[socket.id], getTeam(socket.id))
+            io.emit('buzzed', players[socket.id])
         })
 
         //when host sets buzzers active/deactive
@@ -71,29 +80,20 @@ module.exports = (io) => {
         socket.on('disconnect', () => {
             //remove player
             if (Object.hasOwn(players, socket.id)) {
-                removeFromTeams(socket.id)
+                removeFromTeams(players[socket.id])
                 delete players[socket.id]
                 numPlayers--
             }
         })
 
         //-------------------- helper functions --------------------
-        //removes id from all teams
-        function removeFromTeams(id) {
-            Object.values(teams).forEach(ids => {
-                const i = ids.indexOf(id)
+        //removes name from all teams
+        function removeFromTeams(name) {
+            for (const names of Object.values(teams)) {
+                const i = names.indexOf(name)
                 if (i > -1)
-                    ids.splice(i, 1)
-            })
-        }
-
-        //returns last team id is on, or null
-        function getTeam(id) {
-            for (const team in teams) {
-                if (teams[team].includes(id))
-                    return team
+                    names.splice(i, 1)
             }
-            return null
         }
     })
 }

@@ -10,7 +10,7 @@ class TeamScore extends DisplayItem {
 
         this.teamTile = new Tile(team, {displayBack: false})
         this.scoreTile = new Tile(0, {textColor: COLORS.GOLD, displayBack: false})
-        // this.players = []
+        this.players = []
     }
 
     /**
@@ -32,9 +32,16 @@ class TeamScore extends DisplayItem {
     /**
      * sets list of players
      */
-    // setPlayers(players) {
-    //     this.players = players
-    // }
+    setPlayers(players) {
+        this.players = players
+    }
+
+    /**
+     * returns true if player is on this team
+     */
+    hasPlayer(player) {
+        return this.players.includes(player)
+    }
 
     /**
      * directly sets score

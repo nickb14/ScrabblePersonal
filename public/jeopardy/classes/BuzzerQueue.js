@@ -10,13 +10,11 @@ class BuzzerQueue extends DisplayItem {
     constructor() {
         super()
 
-        this.correctTile = new Tile("correct", {textColor: COLORS.BLACK, backColor: COLORS.GOLD})
-        this.incorrectTile = new Tile("incorrect", {textColor: COLORS.BLACK, backColor: COLORS.GRAY})
+        this.correctTile = new Tile("Correct", {textColor: COLORS.BLACK, backColor: COLORS.GOLD})
+        this.incorrectTile = new Tile("Incorrect", {textColor: COLORS.BLACK, backColor: COLORS.GRAY})
 
         this.playerTiles = []
         this.maxDisplayed = 5
-
-        this.teams = []
     }
 
     /**
@@ -43,12 +41,10 @@ class BuzzerQueue extends DisplayItem {
     /**
      * push to end of queue
      */
-    push(player, team) {
+    push(player) {
         this.playerTiles.push(new Tile(player, {displayBack: false}))
         this.playerTiles[0].setDisplayBack(true)
         this.resize(this.x, this.y, this.w, this.h)
-
-        this.teams.push(team)
     }
 
     /**
@@ -59,8 +55,6 @@ class BuzzerQueue extends DisplayItem {
         if (this.playerTiles.length > 0)
             this.playerTiles[0].setDisplayBack(true)
         this.resize(this.x, this.y, this.w, this.h)
-
-        this.teams.shift()
     }
 
     /**
@@ -68,7 +62,6 @@ class BuzzerQueue extends DisplayItem {
      */
     clear() {
         this.playerTiles.length = 0
-        this.teams.length = 0
     }
 
     /**
@@ -85,16 +78,16 @@ class BuzzerQueue extends DisplayItem {
      * returns object: {clicked: bool, correct: bool, team: string}
      *  clicked: true if click on either button
      *  correct: true if 'correct' button clicked
-     *  team: team that the active player is on
+     *  player: player name
      */
     click(x, y) {
         if (this.playerTiles.length !== 0) {
-            const team = this.teams[0]
+            const player = this.playerTiles[0].getContent()
             if (this.correctTile.click(x, y)) {
-                return {clicked: true, correct: true, team}
+                return {clicked: true, correct: true, player}
             } else if (this.incorrectTile.click(x, y)) {
                 this.pop()
-                return {clicked: true, correct: false, team}
+                return {clicked: true, correct: false, player}
             }
             return {clicked: false}
         }

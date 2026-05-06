@@ -20,7 +20,9 @@ function startGame(gameData) {
     const board = new Board(gameData)
     const solutions = new Solutions(gameData)
     const scoreboard = new Scoreboard()
-    const buzzerQueue = new BuzzerQueue()    
+    const buzzerQueue = new BuzzerQueue()
+    const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
+    const resetGame = new Tile("Reset game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
 
     //recalled everytime window is resized
     function resize() {
@@ -32,9 +34,11 @@ function startGame(gameData) {
 
         //resize game items
         board.resize(50, 50, 1400, 1000)
-        solutions.resize(1500, 50, 300, 200)
+        solutions.resize(1500, 200, 300, 200)
         scoreboard.resize(50, 1100, 1400, 250)
-        buzzerQueue.resize(1500, 300, 300, 500)
+        buzzerQueue.resize(1500, 450, 300, 500)
+        exitButton.resize(1700, 60, 100, 100)
+        resetGame.resize(1590, 60, 100, 100)
     }
     resize()
 
@@ -46,12 +50,16 @@ function startGame(gameData) {
         board.hover(mouseX, mouseY)
         solutions.hover(mouseX, mouseY)
         buzzerQueue.hover(mouseX, mouseY)
+        exitButton.hover(mouseX, mouseY)
+        resetGame.hover(mouseX, mouseY)
 
         //draw game items
         board.draw(ctx)
         solutions.draw(ctx)
         scoreboard.draw(ctx)
         buzzerQueue.draw(ctx)
+        exitButton.draw(ctx)
+        resetGame.draw(ctx)
 
         requestAnimationFrame(animate)
     }
@@ -59,8 +67,8 @@ function startGame(gameData) {
 
     //------------------------------ SOCKET CALLS -----------------------------
 
-    socket.on('buzzed', (name, team) => {
-        buzzerQueue.push(name, team)
+    socket.on('buzzed', (name) => {
+        buzzerQueue.push(name)
     })
 
     socket.on('setTeams', (teams) => {
@@ -77,8 +85,9 @@ function startGame(gameData) {
 
         //click game items
         let {clicked: boardClicked, index} = board.click(x, y)
+        const {clicked: queueClicked, correct, player} = buzzerQueue.click(x, y)
         solutions.click(x, y)
-        const {clicked: queueClicked, correct, team} = buzzerQueue.click(x, y)
+        const exitClicked = exitButton.click(x, y)
 
         //handle clicks...
         if (boardClicked) {
@@ -89,14 +98,17 @@ function startGame(gameData) {
         if (queueClicked) {
             const points = board.getValue()
             if (correct) {
-                scoreboard.addScore(points, team)
+                scoreboard.addScore(points, player)
                 board.returnToBoard()
                 index = -1
             } else {
-                scoreboard.addScore(-points, team)
+                scoreboard.addScore(-points, player)
             }
         }
         solutions.setCurrentSolution(index)
+        if (exitClicked) {
+            location.href = "/jeopardy"
+        }
     })
 
     canvas.addEventListener("pointermove", (event) => {

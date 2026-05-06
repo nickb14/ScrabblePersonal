@@ -66,7 +66,7 @@ socket.on('setTeam', (team) => {
 })
 
 socket.on('setTeams', (newTeams) => {
-    teams = newTeams
+    teams = Object.keys(newTeams)
 })
 
 socket.on('setBuzzer', (active) => {

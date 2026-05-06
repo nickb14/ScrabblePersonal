@@ -23,7 +23,7 @@ class DisplayItem {
         this.y = y
         this.w = w
         this.h = h
-        this.borderWidth = Math.min(w, h)/100
+        this.borderWidth = Math.min(w, h)/50
         this.cornerRadii = Math.min(w, h)/20
     }
 
