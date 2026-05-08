@@ -39,20 +39,23 @@ class Scoreboard extends DisplayItem {
     }
 
     /**
-     * returns object: {clicked: bool, dim: [x, y, w, h], score: number}
-     *  clicked: true if click on either button
+     * returns object: {clicked: string, dim: [x, y, w, h], value: string}
+     *  clicked: either "team", "score", or null
      *  dim: dimensions of where to put html element
-     *  score: current score
+     *  value: current score or team name
      */
     click(x, y) {
         for (let teamScore of this.teamScores) {
             const {clicked, dim} = teamScore.click(x, y)
             if (clicked) {
                 this.lastClicked = teamScore
-                return {clicked, dim, score: teamScore.getScore()}
+                if (clicked === "team")
+                    return {clicked, dim, value: teamScore.getTeamName()}
+                if (clicked === "score")
+                    return {clicked, dim, value: String(teamScore.getScore())}
             }
         }
-        return {clicked: false}
+        return {clicked: null}
     }
 
     /**
@@ -93,6 +96,35 @@ class Scoreboard extends DisplayItem {
     setScore(points) {
         if (this.lastClicked != null)
             this.lastClicked.setScore(points)
+    }
+
+    /**
+     * directly sets new name to team score that was last clicked
+     * returns previous name or null
+     */
+    setTeamName(name) {
+        if (this.lastClicked != null) {
+            const prevName = this.lastClicked.getTeamName()
+            this.lastClicked.setTeamName(name)
+            return prevName
+        }
+        return null
+    }
+
+    /**
+     * completely removes team score that was last clicked
+     * returns name of deleted or null
+     */
+    removeTeam() {
+        if (this.lastClicked != null) {
+            const prevName = this.lastClicked.getTeamName()
+            const i = this.teamScores.indexOf(this.lastClicked)
+            if (i > -1)
+                this.teamScores.splice(i, 1)
+            this.resize(this.x, this.y, this.w, this.h)
+            return prevName
+        }
+        return null
     }
 
     /**

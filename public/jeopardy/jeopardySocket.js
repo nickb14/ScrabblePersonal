@@ -68,6 +68,23 @@ module.exports = (io) => {
             io.emit('setTeams', teams)
         })
 
+        //when edits a team name
+        socket.on('changeTeamName', (prevTeam, newTeam) => {
+            for (const player of teams[prevTeam])
+                io.to(getSocketId(player)).emit('setTeam', newTeam)
+            teams[newTeam] = teams[prevTeam]
+            delete teams[prevTeam]
+            io.emit('setTeams', teams)
+        })
+
+        //when host removes a team
+        socket.on('removeTeam', (team) => {
+            for (const player of teams[team])
+                io.to(getSocketId(player)).emit('setTeam', "Select team...")
+            delete teams[team]
+            io.emit('setTeams', teams)
+        })
+
         //when player successfully buzzes in
         socket.on('buzz', () => {
             io.emit('buzzed', players[socket.id])
@@ -93,6 +110,15 @@ module.exports = (io) => {
         })
 
         //-------------------- helper functions --------------------
+        //returns id of player name
+        function getSocketId(name) {
+            for (const id of Object.keys(players)) {
+                if (players[id] === name)
+                    return id
+            }
+            return null
+        }
+
         //removes name from all teams
         function removeFromTeams(name) {
             for (const names of Object.values(teams)) {

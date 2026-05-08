@@ -31,15 +31,18 @@ class TeamScore extends DisplayItem {
     }
 
     /**
-     * returns object: {clicked: bool, dim: [x, y, w, h]}
-     *  clicked: true if click on either button
+     * returns object: {clicked: string, dim: [x, y, w, h]}
+     *  clicked: either "team", "score", or null
      *  dim: dimensions of where to put html element
      */
     click(x, y) {
-        if (this.scoreTile.click(x, y)) {
-            return {clicked: true, dim: this.scoreTile.getDimensions()}
+        if (this.teamTile.click(x, y)) {
+            return {clicked: "team", dim: this.teamTile.getDimensions()}
         }
-        return {clicked: false}
+        if (this.scoreTile.click(x, y)) {
+            return {clicked: "score", dim: this.scoreTile.getDimensions()}
+        }
+        return {clicked: null}
     }
 
     /**
@@ -47,6 +50,13 @@ class TeamScore extends DisplayItem {
      */
     getTeamName() {
         return this.teamTile.getContent()
+    }
+
+    /**
+     * sets team name
+     */
+    setTeamName(name) {
+        this.teamTile.setContent(name)
     }
 
     /**

@@ -4,6 +4,8 @@
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 const pointsInput = document.getElementById('points-input')
+const teamInput = document.getElementById('team-input')
+const removeButton = document.getElementById('remove-button')
 
 const socket = io()
 socket.emit('joinGame', 'host')
@@ -24,7 +26,7 @@ function startGame(gameData) {
     const scoreboard = new Scoreboard()
     const buzzerQueue = new BuzzerQueue()
     const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
-    const resetButton = new Tile("Reset game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
+    const resetButton = new Tile("Reset game(wip)", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
 
     //recalled everytime window is resized
     function resize() {
@@ -41,9 +43,6 @@ function startGame(gameData) {
         buzzerQueue.resize(1500, 450, 300, 500)
         exitButton.resize(1700, 60, 100, 100)
         resetButton.resize(1590, 60, 100, 100)
-
-        //resize html elements
-        resizeHTML(pointsInput, 50, 1100, 1400, 250)
     }
     resize()
 
@@ -94,7 +93,7 @@ function startGame(gameData) {
         const {clicked: queueClicked, correct, player} = buzzerQueue.click(x, y)
         solutions.click(x, y)
         const exitClicked = exitButton.click(x, y)
-        const {clicked: scoreClicked, dim, score} = scoreboard.click(x, y)
+        const {clicked: scoreClicked, dim, value} = scoreboard.click(x, y)
 
         //handle clicks...
         if (boardClicked) {
@@ -113,14 +112,15 @@ function startGame(gameData) {
             }
         }
         solutions.setCurrentSolution(index)
+
         if (exitClicked) {
             location.href = "/jeopardy"
         }
-
-        if (scoreClicked) {
-            promptPoints(dim, score)
-        } else {
-            unprompt()
+        unprompt()
+        if (scoreClicked === "team") {
+            promptTeam(dim, value)
+        } else if (scoreClicked === "score") {
+            promptScore(dim, value)
         }
     })
 
@@ -141,33 +141,70 @@ function startGame(gameData) {
     }
 
     //points input event listener function
-    function onKeydown(event) {
+    function onPointsKeydown(event) {
         if (event.key === "Enter") {
             const points = pointsInput.valueAsNumber
             if (!isNaN(points)) {
                 scoreboard.setScore(points)
                 //PROBABLY EMIT POINTS EVENTUALLY
             }
-            pointsInput.style.display = "none"
-            pointsInput.removeEventListener("keydown", onKeydown)
+            unprompt()
         }
     }
 
-    //activates the points input html element with dimensions
-    function promptPoints(dim, score) {
+    //team input event listener function
+    function onTeamKeydown(event) {
+        if (event.key === "Enter") {
+            const name = teamInput.value
+            const prevName = scoreboard.setTeamName(name)
+            socket.emit("changeTeamName", prevName, name)
+            unprompt()
+        }
+    }
+
+    //team input event listener function
+    function onRemoveClick() {
+        const name = scoreboard.removeTeam()
+        socket.emit("removeTeam", name)
+        unprompt()
+    }
+
+    //activates the points input html element with dimensions and current score
+    function promptScore(dim, score) {
         pointsInput.style.display = "block"
         const [x, y, w, h] = dim
-        resizeHTML(pointsInput, x, y, w, h)
+        resizeHTML(pointsInput, x, y, w*0.95, h)
         pointsInput.value = score
 
         setTimeout(() => pointsInput.focus(), 0) //needs to fully render before focus
-        pointsInput.addEventListener("keydown", onKeydown)
+        pointsInput.addEventListener("keydown", onPointsKeydown)
     }
 
-    //hide all input/select, remove event listeners, reactivate buttons
+    //activates the team div html element with dimensions and current name
+    function promptTeam(dim, name) {
+        teamInput.style.display = "block"
+        removeButton.style.display = "block"
+        const [x, y, w, h] = dim
+        resizeHTML(teamInput, x, y, w*0.7, h)
+        resizeHTML(removeButton, x+w*0.75, y, w*0.25, h)
+
+        teamInput.value = name
+
+        setTimeout(() => teamInput.focus(), 0)
+        teamInput.addEventListener("keydown", onTeamKeydown)
+        removeButton.addEventListener("click", onRemoveClick)
+
+    }
+
+    //hide all input/select, remove event listeners
     function unprompt() {
         pointsInput.style.display = "none"
-        pointsInput.removeEventListener("keydown", onKeydown)
+        pointsInput.removeEventListener("keydown", onPointsKeydown)
+
+        teamInput.style.display = "none"
+        removeButton.style.display = "none"
+        teamInput.removeEventListener("keydown", onTeamKeydown)
+        removeButton.removeEventListener("click", onRemoveClick)
     }
 }
 

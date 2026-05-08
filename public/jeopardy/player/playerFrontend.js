@@ -14,6 +14,7 @@ socket.emit('joinGame', 'player')
 const buzzer = new Buzzer()
 const nameButton = new Tile("Enter name...")
 const teamButton = new Tile("Select team...")
+const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
 let teams = []
 let mouseX = 0, mouseY = 0
 
@@ -29,6 +30,7 @@ function resize() {
     buzzer.resize(50, 50, 1000)
     nameButton.resize(100, 1100, 400, 100)
     teamButton.resize(600, 1100, 400, 100)
+    exitButton.resize(940, 60, 100, 100)
 
     //resize html elements
     resizeHTML(nameInput, 100, 1100, 400, 100)
@@ -45,11 +47,13 @@ function animate(currentTime) {
     buzzer.hover(mouseX, mouseY)
     nameButton.hover(mouseX, mouseY)
     teamButton.hover(mouseX, mouseY)
+    exitButton.hover(mouseX, mouseY)
 
     //draw game items
     buzzer.draw(ctx)
     nameButton.draw(ctx)
     teamButton.draw(ctx)
+    exitButton.draw(ctx)
 
     requestAnimationFrame(animate)
 }
@@ -90,6 +94,8 @@ canvas.addEventListener("pointerdown", (event) => {
         promptTeam()
     else
         unprompt()
+    if (exitButton.click(x, y))
+        location.href = "/jeopardy"
 })
 
 canvas.addEventListener("pointermove", (event) => {
