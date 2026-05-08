@@ -104,11 +104,14 @@ function startGame(gameData) {
         if (queueClicked) {
             const points = board.getValue()
             if (correct) {
-                scoreboard.addScore(points, player)
+                const {score, team} = scoreboard.addScore(points, player)
+                socket.emit('setScore', score, team)
                 board.returnToBoard()
                 index = -1
+                socket.emit('setBuzzers', false)
             } else {
-                scoreboard.addScore(-points, player)
+                const {score, team} = scoreboard.addScore(-points, player)
+                socket.emit('setScore', score, team)
             }
         }
         solutions.setCurrentSolution(index)
@@ -145,8 +148,8 @@ function startGame(gameData) {
         if (event.key === "Enter") {
             const points = pointsInput.valueAsNumber
             if (!isNaN(points)) {
-                scoreboard.setScore(points)
-                //PROBABLY EMIT POINTS EVENTUALLY
+                const team = scoreboard.setScore(points)
+                socket.emit('setScore', points, team)
             }
             unprompt()
         }

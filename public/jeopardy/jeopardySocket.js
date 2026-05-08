@@ -5,7 +5,7 @@ module.exports = (io) => {
     let numPlayers = 0
     const players = {} //socket.id: player name
     // let numTeams = 0
-    const teams = {} //team name: [array of player names]
+    const teams = {} //team name: {points: number, players: [array of player names]}
     // const buzzerQueue = []
     const hosts = [] //ids of hosts
 
@@ -44,10 +44,10 @@ module.exports = (io) => {
                 return
             }
             players[socket.id] = name
-            for (const names of Object.values(teams)) {
-                const i = names.indexOf(prevName)
+            for (const info of Object.values(teams)) {
+                const i = info.players.indexOf(prevName)
                 if (i > -1)
-                    names[i] = name
+                    info.players[i] = name
             }
 
             io.emit('setTeams', teams)
@@ -60,17 +60,17 @@ module.exports = (io) => {
 
             if (Object.keys(teams).includes(team)) {
                 //existing team
-                teams[team].push(name)
+                teams[team].players.push(name)
             } else {
                 //new team
-                teams[team] = [name]
+                teams[team] = {points: 0, players: [name]}
             }
             io.emit('setTeams', teams)
         })
 
         //when edits a team name
         socket.on('changeTeamName', (prevTeam, newTeam) => {
-            for (const player of teams[prevTeam])
+            for (const player of teams[prevTeam].players)
                 io.to(getSocketId(player)).emit('setTeam', newTeam)
             teams[newTeam] = teams[prevTeam]
             delete teams[prevTeam]
@@ -79,9 +79,16 @@ module.exports = (io) => {
 
         //when host removes a team
         socket.on('removeTeam', (team) => {
-            for (const player of teams[team])
+            for (const player of teams[team].players)
                 io.to(getSocketId(player)).emit('setTeam', "Select team...")
             delete teams[team]
+            io.emit('setTeams', teams)
+        })
+
+        //when host changes the score of a team
+        socket.on('setScore', (points, team) => {
+            if (Object.hasOwn(teams, team))
+                teams[team].points = points
             io.emit('setTeams', teams)
         })
 
@@ -107,6 +114,7 @@ module.exports = (io) => {
             const i = hosts.indexOf(socket.id)
             if (i > -1)
                 hosts.splice(i, 1)
+            io.emit('setTeams', teams)
         })
 
         //-------------------- helper functions --------------------
@@ -121,10 +129,10 @@ module.exports = (io) => {
 
         //removes name from all teams
         function removeFromTeams(name) {
-            for (const names of Object.values(teams)) {
-                const i = names.indexOf(name)
+            for (const info of Object.values(teams)) {
+                const i = info.players.indexOf(name)
                 if (i > -1)
-                    names.splice(i, 1)
+                    info.players.splice(i, 1)
             }
         }
     })

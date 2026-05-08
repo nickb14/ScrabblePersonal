@@ -59,43 +59,54 @@ class Scoreboard extends DisplayItem {
     }
 
     /**
-     * teams: {team name: [array of player names]}
+     * teams: {team name: {points: number, players: [array of player names]}}
      * adds new teams, removes teams no longer there,
      * does not affect team scores if the team is already present
-     * updates all players
+     * updates all scores, updates all players
      */
     setTeams(teams) {
         const newTeams = new Set(Object.keys(teams))
         for (let i = this.teamScores.length-1; i >= 0; i--) {
             const team = this.teamScores[i].getTeamName()
-            if (newTeams.delete(team))
-                this.teamScores[i].setPlayers(teams[team])
-            else
+            if (newTeams.delete(team)) { //existing team
+                this.teamScores[i].setPlayers(teams[team].players)
+                this.teamScores[i].setScore(teams[team].points)
+            } else { //deleted team
                 this.teamScores.splice(i, 1)
+            }
         }
-        for (let team of newTeams) {
+        for (let team of newTeams) { //new team
             this.teamScores.push(new TeamScore(team))
-            this.teamScores.at(-1).setPlayers(teams[team])
+            this.teamScores.at(-1).setPlayers(teams[team].players)
+            this.teamScores.at(-1).setScore(teams[team].points)
         }
         this.resize(this.x, this.y, this.w, this.h)
     }
 
     /**
      * adds points to team score that player is on
+     * returns {score: number, team: string}
      */
     addScore(points, player) {
         for (let teamScore of this.teamScores) {
-            if (teamScore.hasPlayer(player))
+            if (teamScore.hasPlayer(player)) {
                 teamScore.addScore(points)
+                return {score: teamScore.getScore(), team: teamScore.getTeamName()}
+            }
         }
+        return {score: 0, team: null}
     }
 
     /**
      * directly sets points to team score that was last clicked
+     * returns the team points were assigned to, or null
      */
     setScore(points) {
-        if (this.lastClicked != null)
+        if (this.lastClicked != null) {
             this.lastClicked.setScore(points)
+            return this.lastClicked.getTeamName()
+        }
+        return null
     }
 
     /**
