@@ -129,7 +129,7 @@ function onNameKeydown(event) {
     }
 
 //name input event listener function
-function onNameKeydown(event) {
+function onTeamKeydown(event) {
     if (event.key === "Enter") {
         const team = teamInput.value
         if (team.length !== 0) {
@@ -138,16 +138,16 @@ function onNameKeydown(event) {
         }
         teamInput.style.display = "none"
         teamButton.setActive(true)
-        teamInput.removeEventListener("keydown", onNameKeydown)
+        teamInput.removeEventListener("keydown", onTeamKeydown)
     }
 }
 
 //name select event listener function
-function onNameChange() {
+function onTeamChange() {
     if (teamSelect.value === 'new-team') {
         //detect input for new team
         teamInput.style.display = "block"
-        teamInput.addEventListener("keydown", onNameKeydown)
+        teamInput.addEventListener("keydown", onTeamKeydown)
     }
     else {
         const team = teamSelect.value
@@ -156,7 +156,7 @@ function onNameChange() {
         teamButton.setActive(true)
     }
     teamSelect.style.display = "none"
-    teamSelect.removeEventListener("change", onNameChange)
+    teamSelect.removeEventListener("change", onTeamChange)
 }
 
 //activates the name input html element
@@ -191,7 +191,7 @@ function promptTeam() {
     teamSelect.appendChild(newTeam)
 
     teamSelect.style.display = "block"
-    teamSelect.addEventListener("change", onNameChange)
+    teamSelect.addEventListener("change", onTeamChange)
 }
 
 //hide all input/select, remove event listeners, reactivate buttons
@@ -204,6 +204,6 @@ function unprompt() {
     teamInput.style.display = "none"
     
     nameInput.removeEventListener("keydown", onNameKeydown)
-    teamSelect.removeEventListener("change", onNameChange)
-    teamInput.removeEventListener("keydown", onNameKeydown)
+    teamSelect.removeEventListener("change", onTeamChange)
+    teamInput.removeEventListener("keydown", onTeamKeydown)
 }
