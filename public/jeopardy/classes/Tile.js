@@ -138,19 +138,25 @@ class Tile extends Button {
     draw(c) {
         c.beginPath()
 
-        if (this.displayBack) {
-            c.fillStyle = this.backColor
-            c.roundRect(this.x, this.y, this.w, this.h, this.cornerRadii)
+        c.roundRect(this.x, this.y, this.w, this.h, this.cornerRadii)
+        c.fillStyle = this.backColor
+
+        if (this.displayBack)
             c.fill()
-        }
 
         if (!this.active)
             return
 
         if (this.hovering) {
-            c.strokeStyle = COLORS.WHITE
-            c.lineWidth = this.borderWidth
-            c.stroke()
+            if (this.displayBack) {
+                c.strokeStyle = COLORS.WHITE
+                c.lineWidth = this.borderWidth
+                c.stroke()
+            } else {
+                c.globalAlpha = 0.5
+                c.fill()
+                c.globalAlpha = 1
+            }
         }
 
         this.drawText(c)

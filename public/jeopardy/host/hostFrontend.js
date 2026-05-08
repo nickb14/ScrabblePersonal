@@ -1,7 +1,9 @@
 //frontend for host view
 
+//html elements
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
+const pointsInput = document.getElementById('points-input')
 
 const socket = io()
 socket.emit('joinGame', 'host')
@@ -22,7 +24,7 @@ function startGame(gameData) {
     const scoreboard = new Scoreboard()
     const buzzerQueue = new BuzzerQueue()
     const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
-    const resetGame = new Tile("Reset game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
+    const resetButton = new Tile("Reset game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
 
     //recalled everytime window is resized
     function resize() {
@@ -38,7 +40,10 @@ function startGame(gameData) {
         scoreboard.resize(50, 1100, 1400, 250)
         buzzerQueue.resize(1500, 450, 300, 500)
         exitButton.resize(1700, 60, 100, 100)
-        resetGame.resize(1590, 60, 100, 100)
+        resetButton.resize(1590, 60, 100, 100)
+
+        //resize html elements
+        resizeHTML(pointsInput, 50, 1100, 1400, 250)
     }
     resize()
 
@@ -51,7 +56,8 @@ function startGame(gameData) {
         solutions.hover(mouseX, mouseY)
         buzzerQueue.hover(mouseX, mouseY)
         exitButton.hover(mouseX, mouseY)
-        resetGame.hover(mouseX, mouseY)
+        resetButton.hover(mouseX, mouseY)
+        scoreboard.hover(mouseX, mouseY)
 
         //draw game items
         board.draw(ctx)
@@ -59,7 +65,7 @@ function startGame(gameData) {
         scoreboard.draw(ctx)
         buzzerQueue.draw(ctx)
         exitButton.draw(ctx)
-        resetGame.draw(ctx)
+        resetButton.draw(ctx)
 
         requestAnimationFrame(animate)
     }
@@ -88,6 +94,7 @@ function startGame(gameData) {
         const {clicked: queueClicked, correct, player} = buzzerQueue.click(x, y)
         solutions.click(x, y)
         const exitClicked = exitButton.click(x, y)
+        const {clicked: scoreClicked, dim, score} = scoreboard.click(x, y)
 
         //handle clicks...
         if (boardClicked) {
@@ -109,6 +116,12 @@ function startGame(gameData) {
         if (exitClicked) {
             location.href = "/jeopardy"
         }
+
+        if (scoreClicked) {
+            promptPoints(dim, score)
+        } else {
+            unprompt()
+        }
     })
 
     canvas.addEventListener("pointermove", (event) => {
@@ -117,6 +130,45 @@ function startGame(gameData) {
             mouseY = event.offsetY * devicePixelRatio
         }
     })
+
+    //------------------------------ INPUT/SELECT FUNCTIONS -----------------------------
+
+    function resizeHTML(element, x, y, w, h) {
+        element.style.left = x / devicePixelRatio + "px"
+        element.style.top = y / devicePixelRatio + "px"
+        element.style.width = w / devicePixelRatio + "px"
+        element.style.height = h / devicePixelRatio + "px"
+    }
+
+    //points input event listener function
+    function onKeydown(event) {
+        if (event.key === "Enter") {
+            const points = pointsInput.valueAsNumber
+            if (!isNaN(points)) {
+                scoreboard.setScore(points)
+                //PROBABLY EMIT POINTS EVENTUALLY
+            }
+            pointsInput.style.display = "none"
+            pointsInput.removeEventListener("keydown", onKeydown)
+        }
+    }
+
+    //activates the points input html element with dimensions
+    function promptPoints(dim, score) {
+        pointsInput.style.display = "block"
+        const [x, y, w, h] = dim
+        resizeHTML(pointsInput, x, y, w, h)
+        pointsInput.value = score
+
+        setTimeout(() => pointsInput.focus(), 0) //needs to fully render before focus
+        pointsInput.addEventListener("keydown", onKeydown)
+    }
+
+    //hide all input/select, remove event listeners, reactivate buttons
+    function unprompt() {
+        pointsInput.style.display = "none"
+        pointsInput.removeEventListener("keydown", onKeydown)
+    }
 }
 
 loadGame()

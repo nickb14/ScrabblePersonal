@@ -23,6 +23,26 @@ class TeamScore extends DisplayItem {
     }
 
     /**
+     * sets hovering
+     */
+    hover(x, y) {
+        this.teamTile.hover(x, y)
+        this.scoreTile.hover(x, y)
+    }
+
+    /**
+     * returns object: {clicked: bool, dim: [x, y, w, h]}
+     *  clicked: true if click on either button
+     *  dim: dimensions of where to put html element
+     */
+    click(x, y) {
+        if (this.scoreTile.click(x, y)) {
+            return {clicked: true, dim: this.scoreTile.getDimensions()}
+        }
+        return {clicked: false}
+    }
+
+    /**
      * returns team name
      */
     getTeamName() {
@@ -41,6 +61,13 @@ class TeamScore extends DisplayItem {
      */
     hasPlayer(player) {
         return this.players.includes(player)
+    }
+
+    /**
+     * gets current score
+     */
+    getScore() {
+        return this.scoreTile.getValue()
     }
 
     /**

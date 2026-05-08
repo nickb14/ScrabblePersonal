@@ -9,6 +9,7 @@ class Scoreboard extends DisplayItem {
         super()
 
         this.teamScores = []
+        this.lastClicked = null
     }
 
     /**
@@ -27,6 +28,31 @@ class Scoreboard extends DisplayItem {
             this.teamScores[i].resize(tileX, tileY, tileW, tileH)
             tileX += w/this.teamScores.length
         }
+    }
+
+    /**
+     * sets hovering
+     */
+    hover(x, y) {
+        for (let teamScore of this.teamScores)
+            teamScore.hover(x, y)
+    }
+
+    /**
+     * returns object: {clicked: bool, dim: [x, y, w, h], score: number}
+     *  clicked: true if click on either button
+     *  dim: dimensions of where to put html element
+     *  score: current score
+     */
+    click(x, y) {
+        for (let teamScore of this.teamScores) {
+            const {clicked, dim} = teamScore.click(x, y)
+            if (clicked) {
+                this.lastClicked = teamScore
+                return {clicked, dim, score: teamScore.getScore()}
+            }
+        }
+        return {clicked: false}
     }
 
     /**
@@ -59,6 +85,14 @@ class Scoreboard extends DisplayItem {
             if (teamScore.hasPlayer(player))
                 teamScore.addScore(points)
         }
+    }
+
+    /**
+     * directly sets points to team score that was last clicked
+     */
+    setScore(points) {
+        if (this.lastClicked != null)
+            this.lastClicked.setScore(points)
     }
 
     /**

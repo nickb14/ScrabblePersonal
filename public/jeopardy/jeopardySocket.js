@@ -7,6 +7,7 @@ module.exports = (io) => {
     // let numTeams = 0
     const teams = {} //team name: [array of player names]
     // const buzzerQueue = []
+    const hosts = [] //ids of hosts
 
     io.on('connection', (socket) => {
         //when display, host, or player page opened
@@ -29,6 +30,7 @@ module.exports = (io) => {
             }
             //add host
             if (type === 'host') {
+                hosts.push(socket.id)
                 socket.emit('setTeams', teams)
             }
         })
@@ -84,6 +86,10 @@ module.exports = (io) => {
                 delete players[socket.id]
                 numPlayers--
             }
+            //remove host
+            const i = hosts.indexOf(socket.id)
+            if (i > -1)
+                hosts.splice(i, 1)
         })
 
         //-------------------- helper functions --------------------

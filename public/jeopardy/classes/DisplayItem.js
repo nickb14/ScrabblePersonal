@@ -27,4 +27,11 @@ class DisplayItem {
         this.cornerRadii = Math.min(w, h)/20
     }
 
+    /**
+     * returns dimensions as array [x, y, w, h]
+     */
+    getDimensions(x, y, w, h) {
+        return [this.x, this.y, this.w, this.h]
+    }
+
 }
