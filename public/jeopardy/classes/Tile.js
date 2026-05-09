@@ -95,6 +95,20 @@ class Tile extends Button {
     }
 
     /**
+     * sets color of text
+     */
+    setTextColor(color) {
+        this.textColor = color
+    }
+
+    /**
+     * sets color of tile back
+     */
+    setBackColor(color) {
+        this.backColor = color
+    }
+
+    /**
      * sets whether tile back is displayed
      */
     setDisplayBack(displayBack) {

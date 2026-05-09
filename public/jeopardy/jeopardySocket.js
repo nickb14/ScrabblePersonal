@@ -4,10 +4,10 @@ module.exports = (io) => {
 
     let numPlayers = 0
     const players = {} //socket.id: player name
-    // let numTeams = 0
     const teams = {} //team name: {points: number, players: [array of player names]}
     // const buzzerQueue = []
     const hosts = [] //ids of hosts
+    const cluesPlayed = []
 
     io.on('connection', (socket) => {
         //when display, host, or player page opened
@@ -22,9 +22,6 @@ module.exports = (io) => {
                     name = 'Player ' + i
                 players[socket.id] = name
 
-                // numTeams++
-                // teams['Team '+numTeams] = [name]
-
                 socket.emit('setName', name)
                 socket.emit('setTeams', teams)
             }
@@ -32,6 +29,7 @@ module.exports = (io) => {
             if (type === 'host') {
                 hosts.push(socket.id)
                 socket.emit('setTeams', teams)
+                socket.emit('setClues', cluesPlayed)
             }
         })
 
@@ -90,6 +88,24 @@ module.exports = (io) => {
             if (Object.hasOwn(teams, team))
                 teams[team].points = points
             io.emit('setTeams', teams)
+        })
+
+        //when host clicks into a clue
+        socket.on('playClue', (clue) => {
+            if (!cluesPlayed.includes(clue)) {
+                cluesPlayed.push(clue)
+                io.emit('setClues', cluesPlayed)
+            }
+        })
+
+        //when resets entire game
+        socket.on('resetGame', () => {
+            for (const info of Object.values(teams))
+                info.points = 0
+            cluesPlayed.length = 0
+
+            io.emit('setTeams', teams)
+            io.emit('setClues', cluesPlayed)
         })
 
         //when player successfully buzzes in

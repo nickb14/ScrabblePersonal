@@ -69,6 +69,32 @@ class Board extends DisplayItem {
     }
 
     /**
+     * marks the array of clues as already played
+     */
+    deactivateClues(clues) {
+        let clue = 0
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 1; j < this.tiles[i].length; j++) {
+                if (clues.includes(clue))
+                    this.tiles[i][j].setTextColor(COLORS.BLUE)
+                clue++
+            }
+        }
+    }
+
+    /**
+     * marks all clues available, no clue currently selected
+     */
+    reset() {
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 1; j < this.tiles[i].length; j++) {
+                this.tiles[i][j].setTextColor(COLORS.GOLD)
+            }
+        }
+        this.currentClue = -1
+    }
+
+    /**
      * sets hovering for each value tile
      */
     hover(x, y) {
@@ -99,7 +125,7 @@ class Board extends DisplayItem {
             for (let j = 1; j < this.tiles[i].length; j++) {
                 const tile = this.tiles[i][j]
                 if (tile.click(x, y)) {
-                    tile.setActive(false)
+                    tile.setTextColor(COLORS.BLUE)
                     this.currentClue = clue
                     return {clicked: true, index: this.currentClue}
                 }

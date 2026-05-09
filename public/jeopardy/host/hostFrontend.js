@@ -80,6 +80,12 @@ function startGame(gameData) {
         scoreboard.setTeams(teams)
     })
 
+    socket.on('setClues', (playedClues) => {
+        board.deactivateClues(playedClues)
+        if (playedClues.length === 0)
+            board.reset()
+    })
+
     //------------------------------ EVENT LISTENERS -----------------------------
 
     addEventListener("resize", resize)
@@ -93,12 +99,15 @@ function startGame(gameData) {
         const {clicked: queueClicked, correct, player} = buzzerQueue.click(x, y)
         solutions.click(x, y)
         const exitClicked = exitButton.click(x, y)
+        const resetClicked = resetButton.click(x, y)
         const {clicked: scoreClicked, dim, value} = scoreboard.click(x, y)
 
         //handle clicks...
         if (boardClicked) {
-            if (index > -1)
+            if (index > -1) {
                 buzzerQueue.clear()
+                socket.emit('playClue', index)
+            }
             socket.emit('setBuzzers', index > -1)
         }
         if (queueClicked) {
@@ -114,11 +123,18 @@ function startGame(gameData) {
                 socket.emit('setScore', score, team)
             }
         }
-        solutions.setCurrentSolution(index)
 
         if (exitClicked) {
             location.href = "/jeopardy"
         }
+        if (resetClicked) {
+            index = -1
+            buzzerQueue.clear()
+            socket.emit('resetGame')
+        }
+
+        solutions.setCurrentSolution(index)
+
         unprompt()
         if (scoreClicked === "team") {
             promptTeam(dim, value)
@@ -179,7 +195,7 @@ function startGame(gameData) {
         resizeHTML(pointsInput, x, y, w*0.95, h)
         pointsInput.value = score
 
-        setTimeout(() => pointsInput.focus(), 0) //needs to fully render before focus
+        setTimeout(() => pointsInput.focus(), 0)
         pointsInput.addEventListener("keydown", onPointsKeydown)
     }
 

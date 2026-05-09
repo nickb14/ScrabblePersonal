@@ -123,7 +123,6 @@ function onNameKeydown(event) {
                 socket.emit('changeName', name)
             }
             nameInput.style.display = "none"
-            nameButton.setActive(true)
             nameInput.removeEventListener("keydown", onNameKeydown)
         }
     }
@@ -137,7 +136,6 @@ function onTeamKeydown(event) {
             socket.emit('changeTeam', team)
         }
         teamInput.style.display = "none"
-        teamButton.setActive(true)
         teamInput.removeEventListener("keydown", onTeamKeydown)
     }
 }
@@ -147,13 +145,13 @@ function onTeamChange() {
     if (teamSelect.value === 'new-team') {
         //detect input for new team
         teamInput.style.display = "block"
+        setTimeout(() => teamInput.focus(), 0)
         teamInput.addEventListener("keydown", onTeamKeydown)
     }
     else {
         const team = teamSelect.value
         teamButton.setContent(team)
         socket.emit('changeTeam', team)
-        teamButton.setActive(true)
     }
     teamSelect.style.display = "none"
     teamSelect.removeEventListener("change", onTeamChange)
@@ -161,16 +159,13 @@ function onTeamChange() {
 
 //activates the name input html element
 function promptName() {
-    nameButton.setActive(false)
-
     nameInput.style.display = "block"
+    setTimeout(() => nameInput.focus(), 0)
     nameInput.addEventListener("keydown", onNameKeydown)
 }
 
 //activates the name input html element
 function promptTeam() {
-    teamButton.setActive(false)
-
     //repopulate teamSelect
     teamSelect.innerHTML = ''
     const placeholder = document.createElement("option")
@@ -191,14 +186,12 @@ function promptTeam() {
     teamSelect.appendChild(newTeam)
 
     teamSelect.style.display = "block"
+    setTimeout(() => teamSelect.focus(), 0)
     teamSelect.addEventListener("change", onTeamChange)
 }
 
-//hide all input/select, remove event listeners, reactivate buttons
+//hide all input/select, remove event listeners
 function unprompt() {
-    nameButton.setActive(true)
-    teamButton.setActive(true)
-
     nameInput.style.display = "none"
     teamSelect.style.display = "none"
     teamInput.style.display = "none"
