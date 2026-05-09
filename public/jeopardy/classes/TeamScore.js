@@ -11,6 +11,9 @@ class TeamScore extends DisplayItem {
         this.teamTile = new Tile(team, {displayBack: false})
         this.scoreTile = new Tile(0, {textColor: COLORS.GOLD, displayBack: false})
         this.players = []
+
+        this.displayPlayers = true
+        this.playersTile = new Tile("", {displayBack: false})
     }
 
     /**
@@ -18,8 +21,14 @@ class TeamScore extends DisplayItem {
      */
     resize(x, y, w, h) {
         super.resize(x, y, w, h)
-        this.teamTile.resize(x, y, w, h/2)
-        this.scoreTile.resize(x, y+h*2/5, w, h/2)
+        if (this.displayPlayers) {
+            this.teamTile.resize(x, y, w, h*0.4)
+            this.scoreTile.resize(x, y+h*0.3, w, h*0.5)
+        } else {
+            this.teamTile.resize(x, y, w, h*0.5)
+            this.scoreTile.resize(x, y+h*0.4, w, h*0.5)
+        }
+        this.playersTile.resize(x, y+h*0.7, w, h*0.3)
     }
 
     /**
@@ -64,6 +73,7 @@ class TeamScore extends DisplayItem {
      */
     setPlayers(players) {
         this.players = players
+        this.playersTile.setContent(players.join(", "))
     }
 
     /**
@@ -107,5 +117,7 @@ class TeamScore extends DisplayItem {
 
         this.teamTile.draw(c)
         this.scoreTile.draw(c)
+        if (this.displayPlayers)
+            this.playersTile.draw(c)
     }
 }

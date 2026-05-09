@@ -81,9 +81,7 @@ function startGame(gameData) {
     })
 
     socket.on('setClues', (playedClues) => {
-        board.deactivateClues(playedClues)
-        if (playedClues.length === 0)
-            board.reset()
+        board.setClues(playedClues)
     })
 
     //------------------------------ EVENT LISTENERS -----------------------------
@@ -205,7 +203,7 @@ function startGame(gameData) {
         removeButton.style.display = "block"
         const [x, y, w, h] = dim
         resizeHTML(teamInput, x, y, w*0.7, h)
-        resizeHTML(removeButton, x+w*0.75, y, w*0.25, h)
+        resizeHTML(removeButton, x+w*0.75, y, Math.max(w*0.25, 130), h)
 
         teamInput.value = name
 

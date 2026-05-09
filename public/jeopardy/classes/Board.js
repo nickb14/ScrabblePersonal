@@ -70,28 +70,19 @@ class Board extends DisplayItem {
 
     /**
      * marks the array of clues as already played
+     * any clues not in the array marked as unplayed
      */
-    deactivateClues(clues) {
+    setClues(clues) {
         let clue = 0
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 1; j < this.tiles[i].length; j++) {
                 if (clues.includes(clue))
                     this.tiles[i][j].setTextColor(COLORS.BLUE)
+                else
+                    this.tiles[i][j].setTextColor(COLORS.GOLD)
                 clue++
             }
         }
-    }
-
-    /**
-     * marks all clues available, no clue currently selected
-     */
-    reset() {
-        for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 1; j < this.tiles[i].length; j++) {
-                this.tiles[i][j].setTextColor(COLORS.GOLD)
-            }
-        }
-        this.currentClue = -1
     }
 
     /**
