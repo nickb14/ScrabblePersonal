@@ -27,15 +27,19 @@ function resize() {
     canvas.height = innerHeight * devicePixelRatio
 
     //resize game items
-    buzzer.resize(50, 50, 1000)
-    nameButton.resize(100, 1100, 400, 100)
-    teamButton.resize(600, 1100, 400, 100)
-    exitButton.resize(940, 60, 100, 100)
-
-    //resize html elements
-    resizeHTML(nameInput, 100, 1100, 400, 100)
-    resizeHTML(teamSelect, 600, 1100, 400, 100)
-    resizeHTML(teamInput, 600, 1100, 400, 100)
+    const w = canvas.width
+    const h = canvas.height
+    if (w > h) { //assume desktop
+        exitButton.resize(Math.min(w*0.5+h*0.5, w-h*0.1), h*0.05, h*0.1, h*0.1)
+        buzzer.resize(w*0.5-h*0.45, h*0.05, h*0.9)
+        nameButton.resize(Math.max(w*0.5-h*0.925, 0), h*0.84375, h*0.425, h*0.10625)
+        teamButton.resize(Math.min(w*0.5+h*0.5, w-h*0.425), h*0.84375, h*0.425, h*0.10625)
+    } else { //assume mobile
+        exitButton.resize(w*0.85, Math.max(h*0.5-w*0.6, 0), w*0.1, w*0.1)
+        buzzer.resize(w*0.05, h*0.5-w*0.45, w*0.9)
+        nameButton.resize(w*0.05, Math.min(h*0.5+w*0.5, h-w*0.10625), w*0.425, w*0.10625)
+        teamButton.resize(w*0.525, Math.min(h*0.5+w*0.5, h-w*0.10625), w*0.425, w*0.10625)
+    }
 }
 resize()
 
@@ -145,6 +149,10 @@ function onTeamChange() {
     if (teamSelect.value === 'new-team') {
         //detect input for new team
         teamInput.style.display = "block"
+        const [x, y, w, h] = teamButton.getDimensions()
+        resizeHTML(teamInput, x, y, w, h)
+
+
         setTimeout(() => teamInput.focus(), 0)
         teamInput.addEventListener("keydown", onTeamKeydown)
     }
@@ -160,6 +168,9 @@ function onTeamChange() {
 //activates the name input html element
 function promptName() {
     nameInput.style.display = "block"
+    const [x, y, w, h] = nameButton.getDimensions()
+    resizeHTML(nameInput, x, y, w, h)
+
     setTimeout(() => nameInput.focus(), 0)
     nameInput.addEventListener("keydown", onNameKeydown)
 }
@@ -186,6 +197,9 @@ function promptTeam() {
     teamSelect.appendChild(newTeam)
 
     teamSelect.style.display = "block"
+    const [x, y, w, h] = teamButton.getDimensions()
+    resizeHTML(teamSelect, x, y, w, h)
+
     setTimeout(() => teamSelect.focus(), 0)
     teamSelect.addEventListener("change", onTeamChange)
 }

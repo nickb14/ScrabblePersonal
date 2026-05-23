@@ -26,7 +26,7 @@ function startGame(gameData) {
     const scoreboard = new Scoreboard()
     const buzzerQueue = new BuzzerQueue()
     const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
-    const resetButton = new Tile("Reset game(wip)", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
+    const resetButton = new Tile("Reset game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
 
     //recalled everytime window is resized
     function resize() {
