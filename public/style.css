@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+a {
+    width: 80%;
+    text-decoration: none;
+}
+
+button {
+    width: 100%;
+    padding: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}

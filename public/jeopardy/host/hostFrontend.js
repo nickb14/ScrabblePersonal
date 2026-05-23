@@ -37,12 +37,15 @@ function startGame(gameData) {
         canvas.height = innerHeight * devicePixelRatio
 
         //resize game items
-        board.resize(50, 50, 1400, 1000)
-        solutions.resize(1500, 200, 300, 200)
-        scoreboard.resize(50, 1100, 1400, 250)
-        buzzerQueue.resize(1500, 450, 300, 500)
-        exitButton.resize(1700, 60, 100, 100)
-        resetButton.resize(1590, 60, 100, 100)
+        const w = canvas.width
+        const h = canvas.height
+        //assume desktop
+        board.resize(w*0.05, h*0.05, w*0.7, h*0.7)
+        resetButton.resize(w*0.8, h*0.05, w*0.05, h*0.1)
+        exitButton.resize(w*0.9, h*0.05, w*0.05, h*0.1)
+        solutions.resize(w*0.8, h*0.2, w*0.15, h*0.2)
+        buzzerQueue.resize(w*0.8, h*0.45, w*0.15, h*0.5)
+        scoreboard.resize(w*0.05, h*0.8, w*0.7, h*0.15)
     }
     resize()
 
