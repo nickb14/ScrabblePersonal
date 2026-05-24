@@ -62,6 +62,13 @@ class Board extends DisplayItem {
     }
 
     /**
+     * directly sets clue to be displayed, by clue index
+     */
+    displayClue(clue) {
+        this.currentClue = clue
+    }
+
+    /**
      * sets no active clue displaying
      */
     returnToBoard() {

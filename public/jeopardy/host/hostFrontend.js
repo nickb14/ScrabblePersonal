@@ -41,8 +41,8 @@ function startGame(gameData) {
         const h = canvas.height
         //assume desktop
         board.resize(w*0.05, h*0.05, w*0.7, h*0.7)
-        resetButton.resize(w*0.8, h*0.05, w*0.05, h*0.1)
-        exitButton.resize(w*0.9, h*0.05, w*0.05, h*0.1)
+        resetButton.resize(w*0.8, h*0.05, w*0.07, h*0.1)
+        exitButton.resize(w*0.88, h*0.05, w*0.07, h*0.1)
         solutions.resize(w*0.8, h*0.2, w*0.15, h*0.2)
         buzzerQueue.resize(w*0.8, h*0.45, w*0.15, h*0.5)
         scoreboard.resize(w*0.05, h*0.8, w*0.7, h*0.15)

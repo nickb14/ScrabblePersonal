@@ -7,7 +7,7 @@ class BuzzerQueue extends DisplayItem {
     /**
      * 
     */
-    constructor() {
+    constructor({displayButtons=true} = {}) {
         super()
 
         this.correctTile = new Tile("Correct", {textColor: COLORS.BLACK, backColor: COLORS.GOLD})
@@ -15,6 +15,8 @@ class BuzzerQueue extends DisplayItem {
 
         this.playerTiles = []
         this.maxDisplayed = 5
+
+        this.displayButtons = displayButtons
     }
 
     /**
@@ -25,16 +27,21 @@ class BuzzerQueue extends DisplayItem {
 
         const borderRatio = 0.03
         const tileW = w * (1-2*borderRatio)
-        const tileH = h/(this.maxDisplayed+1) * (1-2*borderRatio)
+        let tileH = h/(this.maxDisplayed+1) * (1-2*borderRatio)
         const tileX = x + borderRatio * tileW
         let tileY = y + 3*borderRatio * tileH
+        if (!this.displayButtons)
+            tileH = h/(this.maxDisplayed) * (1-2*borderRatio)
 
         this.correctTile.resize(tileX, tileY, tileW/2*(1-borderRatio/2), tileH)
         this.incorrectTile.resize(tileX+tileW/2*(1+borderRatio/2), tileY, tileW/2*(1-borderRatio/2), tileH)
 
         for (let i = 0; i < this.playerTiles.length; i++) {
-            tileY += h/(this.maxDisplayed+1)
+            if (this.displayButtons)
+                tileY += h/(this.maxDisplayed+1)
             this.playerTiles[i].resize(tileX, tileY, tileW, tileH)
+            if (!this.displayButtons)
+                tileY += h/(this.maxDisplayed)
         }
     }
 
@@ -107,8 +114,11 @@ class BuzzerQueue extends DisplayItem {
 
         if (this.playerTiles.length === 0)
             c.globalAlpha = 0.5
-        this.correctTile.draw(c)
-        this.incorrectTile.draw(c)
+        if (this.displayButtons) {
+            this.correctTile.draw(c)
+            this.incorrectTile.draw(c)
+        }
+        
         for (let i = 0; i < this.playerTiles.length && i < this.maxDisplayed; i++) {
             this.playerTiles[i].draw(c)
             c.globalAlpha -= 1/this.maxDisplayed

@@ -31,6 +31,11 @@ module.exports = (io) => {
                 socket.emit('setTeams', teams)
                 socket.emit('setClues', cluesPlayed)
             }
+            //add display
+            if (type === 'display') {
+                socket.emit('setTeams', teams)
+                socket.emit('setClues', cluesPlayed)
+            }
         })
 
         //when player changes name
@@ -96,6 +101,7 @@ module.exports = (io) => {
                 cluesPlayed.push(clue)
                 io.emit('setClues', cluesPlayed)
             }
+            io.emit('cluePlayed', clue)
         })
 
         //when resets entire game
