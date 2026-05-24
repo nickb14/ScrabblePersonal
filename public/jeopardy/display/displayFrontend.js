@@ -75,6 +75,7 @@ function startGame(gameData) {
 
     socket.on('cluePlayed', (clue) => {
         board.displayClue(clue)
+        buzzerQueue.clear()
     })
 
     socket.on('setBuzzer', (active) => {
