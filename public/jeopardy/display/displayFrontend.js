@@ -83,6 +83,11 @@ function startGame(gameData) {
             board.returnToBoard()
     })
 
+    socket.on('playerGuessed', (player, correct) => {
+        if (!correct)
+            buzzerQueue.pop()
+    })
+
     //------------------------------ EVENT LISTENERS -----------------------------
 
     addEventListener("resize", resize)

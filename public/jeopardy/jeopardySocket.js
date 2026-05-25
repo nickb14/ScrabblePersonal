@@ -5,9 +5,9 @@ module.exports = (io) => {
     let numPlayers = 0
     const players = {} //socket.id: player name
     const teams = {} //team name: {points: number, players: [array of player names]}
-    // const buzzerQueue = []
+    // const buzzerQueue = [] //array of player names
     const hosts = [] //ids of hosts
-    const cluesPlayed = []
+    const cluesPlayed = [] //array of clue indexes
 
     io.on('connection', (socket) => {
         //when display, host, or player page opened
@@ -71,7 +71,7 @@ module.exports = (io) => {
             io.emit('setTeams', teams)
         })
 
-        //when edits a team name
+        //when host edits a team name
         socket.on('changeTeamName', (prevTeam, newTeam) => {
             for (const player of teams[prevTeam].players)
                 io.to(getSocketId(player)).emit('setTeam', newTeam)
@@ -95,6 +95,11 @@ module.exports = (io) => {
             io.emit('setTeams', teams)
         })
 
+        //when host marks the next player in queue as correct/incorrect
+        socket.on('playerGuess', (player, correct) => {
+            io.emit('playerGuessed', player, correct)
+        })
+
         //when host clicks into a clue
         socket.on('playClue', (clue) => {
             if (!cluesPlayed.includes(clue)) {
@@ -112,6 +117,7 @@ module.exports = (io) => {
 
             io.emit('setTeams', teams)
             io.emit('setClues', cluesPlayed)
+            io.emit('cluePlayed', -1)
         })
 
         //when player successfully buzzes in

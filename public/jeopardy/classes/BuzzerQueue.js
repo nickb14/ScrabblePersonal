@@ -65,6 +65,15 @@ class BuzzerQueue extends DisplayItem {
     }
 
     /**
+     * returns first in queue, or null
+     */
+    peek() {
+        if (this.playerTiles.length > 0)
+            return this.playerTiles[0].getContent()
+        return null
+    }
+
+    /**
      * clears queue
      */
     clear() {

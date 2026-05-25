@@ -87,6 +87,24 @@ function startGame(gameData) {
         board.setClues(playedClues)
     })
 
+    socket.on('cluePlayed', (clue) => {
+        board.displayClue(clue)
+        solutions.setCurrentSolution(clue)
+        buzzerQueue.clear()
+    })
+
+    socket.on('setBuzzer', (active) => {
+        if (!active) {
+            board.returnToBoard()
+            solutions.setCurrentSolution(-1)
+        }
+    })
+
+    socket.on('playerGuessed', (player, correct) => {
+        if (!correct && player === buzzerQueue.peek())
+            buzzerQueue.pop()
+    })
+
     //------------------------------ EVENT LISTENERS -----------------------------
 
     addEventListener("resize", resize)
@@ -105,10 +123,8 @@ function startGame(gameData) {
 
         //handle clicks...
         if (boardClicked) {
-            if (index > -1) {
-                buzzerQueue.clear()
+            if (index > -1)
                 socket.emit('playClue', index)
-            }
             socket.emit('setBuzzers', index > -1)
         }
         if (queueClicked) {
@@ -116,25 +132,20 @@ function startGame(gameData) {
             if (correct) {
                 const {score, team} = scoreboard.addScore(points, player)
                 socket.emit('setScore', score, team)
-                board.returnToBoard()
-                index = -1
                 socket.emit('setBuzzers', false)
             } else {
                 const {score, team} = scoreboard.addScore(-points, player)
                 socket.emit('setScore', score, team)
             }
+            socket.emit('playerGuess', player, correct)
         }
 
         if (exitClicked) {
             location.href = "/jeopardy"
         }
         if (resetClicked) {
-            index = -1
-            buzzerQueue.clear()
             socket.emit('resetGame')
         }
-
-        solutions.setCurrentSolution(index)
 
         unprompt()
         if (scoreClicked === "team") {
