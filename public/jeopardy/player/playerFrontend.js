@@ -7,7 +7,7 @@ const nameInput = document.getElementById('name-input')
 const teamSelect = document.getElementById('team-select')
 const teamInput = document.getElementById('team-input')
 
-const socket = io()
+const socket = io('/jeopardy')
 socket.emit('joinGame', 'player')
 
 //all game items

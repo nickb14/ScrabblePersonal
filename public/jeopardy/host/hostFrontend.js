@@ -7,7 +7,7 @@ const pointsInput = document.getElementById('points-input')
 const teamInput = document.getElementById('team-input')
 const removeButton = document.getElementById('remove-button')
 
-const socket = io()
+const socket = io('/jeopardy')
 socket.emit('joinGame', 'host')
 
 //get game data from json

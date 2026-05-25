@@ -6,13 +6,13 @@ const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 
 //namespace
-const socket = io()
+const socket = io('/scrabble')
 socket.emit('joinGame')
 
-//everything size-wise is based on TILE_SIZE for now... (based on innerHeight)
-canvas.height = innerHeight
-const TILE_SIZE = canvas.height / 20
-canvas.width = TILE_SIZE*24
+//TILE_SIZE is based on whichever dimension is tighter so nothing gets cut off
+const TILE_SIZE = Math.min(innerHeight / 20, innerWidth / 28)
+canvas.height = TILE_SIZE * 20
+canvas.width = TILE_SIZE * 28
 
 //declaring/initializing a bunch of game objects, basically...
 let id = -1

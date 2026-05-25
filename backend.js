@@ -23,7 +23,7 @@ app.get('/scrabblepage', (req, res) => {
   res.sendFile(__dirname + '/public/scrabble/scrabblepage.html')
 })
 
-require('./public/scrabble/scrabbleSocket')(io)
+require('./public/scrabble/scrabbleSocket')(io.of('/scrabble'))
 
 
 
@@ -45,7 +45,7 @@ app.get('/jeopardy/player', (req, res) => {
   res.sendFile(__dirname + '/public/jeopardy/player/player.html')
 })
 
-require('./public/jeopardy/jeopardySocket')(io)
+require('./public/jeopardy/jeopardySocket')(io.of('/jeopardy'))
 
 
 server.listen(port, '0.0.0.0', () => {
