@@ -109,6 +109,11 @@ module.exports = (io) => {
             io.emit('cluePlayed', clue)
         })
 
+        //when host clicks on solution to return to board
+        socket.on('returnToBoard', () => {
+            io.emit('returnedToBoard')
+        })
+
         //when resets entire game
         socket.on('resetGame', () => {
             for (const info of Object.values(teams))

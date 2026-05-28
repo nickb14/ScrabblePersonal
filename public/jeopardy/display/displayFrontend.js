@@ -80,7 +80,11 @@ function startGame(gameData) {
 
     socket.on('setBuzzer', (active) => {
         if (!active)
-            board.returnToBoard()
+            board.displaySolution()
+    })
+
+    socket.on('returnedToBoard', () => {
+        board.returnToBoard()
     })
 
     socket.on('playerGuessed', (player, correct) => {

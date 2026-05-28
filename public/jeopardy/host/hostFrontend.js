@@ -95,9 +95,13 @@ function startGame(gameData) {
 
     socket.on('setBuzzer', (active) => {
         if (!active) {
-            board.returnToBoard()
+            board.displaySolution()
             solutions.setCurrentSolution(-1)
         }
+    })
+
+    socket.on('returnedToBoard', () => {
+        board.returnToBoard()
     })
 
     socket.on('playerGuessed', (player, correct) => {
@@ -123,9 +127,14 @@ function startGame(gameData) {
 
         //handle clicks...
         if (boardClicked) {
-            if (index > -1)
+            if (index > -1) {
                 socket.emit('playClue', index)
-            socket.emit('setBuzzers', index > -1)
+                socket.emit('setBuzzers', true)
+            } else if (index === -2) {
+                socket.emit('setBuzzers', false)
+            } else {
+                socket.emit('returnToBoard')
+            }
         }
         if (queueClicked) {
             const points = board.getValue()

@@ -11,16 +11,19 @@ class Board extends DisplayItem {
 
         this.tiles = []
         this.clues = []
+        this.solutions = []
 
         for (let i = 0; i < data.length; i++) {
             this.tiles.push([new Tile(data[i]["category"], {lineLength: 10})])
             for (let clue of data[i]["clues"]) {
                 this.tiles[i].push(new Tile(clue["value"], {textColor: COLORS.GOLD}))
                 this.clues.push(new Tile(clue["clue"]))
+                this.solutions.push(new Tile(clue["solution"]))
             }
         }
 
         this.currentClue = -1
+        this.currentSolution = false
     }
 
     /**
@@ -42,6 +45,8 @@ class Board extends DisplayItem {
 
         for (let clue of this.clues)
             clue.resize(x, y, w, h)
+        for (let solution of this.solutions)
+            solution.resize(x, y, w, h)
     }
 
     /**
@@ -66,6 +71,15 @@ class Board extends DisplayItem {
      */
     displayClue(clue) {
         this.currentClue = clue
+        this.currentSolution = false
+    }
+
+    /**
+     * displays solution of current clue
+     */
+    displaySolution() {
+        if (this.currentClue !== -1)
+            this.currentSolution = true
     }
 
     /**
@@ -73,6 +87,7 @@ class Board extends DisplayItem {
      */
     returnToBoard() {
         this.currentClue = -1
+        this.currentSolution = false
     }
 
     /**
@@ -97,7 +112,10 @@ class Board extends DisplayItem {
      */
     hover(x, y) {
         if (this.currentClue != -1) {
-            this.clues[this.currentClue].hover(x, y)
+            if (!this.currentSolution)
+                this.clues[this.currentClue].hover(x, y)
+            else
+                this.solutions[this.currentClue].hover(x, y)
             return
         }
         for (let col of this.tiles) {
@@ -111,12 +129,17 @@ class Board extends DisplayItem {
      * clicks into clue
      * returns object: {clicked: bool, index: number}
      *  clicked: true if click was within the bounds of the board
-     *  index: of currently displayed clue
+     *  index: of clue if it was just clicked, -2 if displaying solution, -1 if returning to board
      */
     click(x, y) {
-        if (this.currentClue != -1 && this.clues[this.currentClue].click(x, y)) {
-            this.currentClue = -1
-            return {clicked: true, index: this.currentClue}
+        if (this.currentClue !== -1) {
+            if (!this.currentSolution && this.clues[this.currentClue].click(x, y)) {
+                this.displaySolution()
+                return {clicked: true, index: -2}
+            } else if (this.currentSolution && this.solutions[this.currentClue].click(x, y)) {
+                this.returnToBoard()
+                return {clicked: true, index: -1}
+            }
         }
         let clue = 0
         for (let i = 0; i < this.tiles.length; i++) {
@@ -137,8 +160,11 @@ class Board extends DisplayItem {
      * draws on 2D canvas context
      */
     draw(c) {
-        if (this.currentClue != -1) {
-            this.clues[this.currentClue].draw(c)
+        if (this.currentClue !== -1) {
+            if (!this.currentSolution)
+                this.clues[this.currentClue].draw(c)
+            else
+                this.solutions[this.currentClue].draw(c)
             return
         }
         for (let col of this.tiles) {
@@ -147,6 +173,5 @@ class Board extends DisplayItem {
             }
         }
     }
-
 
 }
