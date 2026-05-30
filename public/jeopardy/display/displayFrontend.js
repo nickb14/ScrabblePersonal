@@ -22,6 +22,7 @@ function startGame(gameData) {
     const scoreboard = new Scoreboard()
     const buzzerQueue = new BuzzerQueue({displayButtons: false})
     const exitButton = new Tile("Exit game", {textColor: COLORS.BLACK, lineLength: 1, backColor: COLORS.GRAY})
+    const contexts = new TilesDisplay(gameData, {type: "context", defaultStr: "-  Context  -"})
 
     //recalled everytime window is resized
     function resize() {
@@ -35,10 +36,11 @@ function startGame(gameData) {
         const w = canvas.width
         const h = canvas.height
         //assume desktop
-        board.resize(w*0.05, h*0.05, w*0.7, h*0.7)
-        exitButton.resize(w*0.88, h*0.05, w*0.07, h*0.1)
-        buzzerQueue.resize(w*0.8, h*0.2, w*0.15, h*0.5)
-        scoreboard.resize(w*0.05, h*0.8, w*0.7, h*0.15)
+        board.resize(w*0.05, h*0.05, w*0.6, h*0.7)
+        scoreboard.resize(w*0.05, h*0.8, w*0.6, h*0.15)
+        contexts.resize(w*0.68, h*0.05, w*0.15, h*0.17)
+        buzzerQueue.resize(w*0.68, h*0.25, w*0.15, h*0.5)
+        exitButton.resize(w*0.86, h*0.05, w*0.07, h*0.1)
     }
     resize()
 
@@ -54,6 +56,7 @@ function startGame(gameData) {
         scoreboard.draw(ctx)
         buzzerQueue.draw(ctx)
         exitButton.draw(ctx)
+        contexts.draw(ctx)
 
         requestAnimationFrame(animate)
     }
@@ -75,12 +78,15 @@ function startGame(gameData) {
 
     socket.on('cluePlayed', (clue) => {
         board.displayClue(clue)
+        contexts.setCurrentIndex(clue)
         buzzerQueue.clear()
     })
 
     socket.on('setBuzzer', (active) => {
-        if (!active)
+        if (!active) {
             board.displaySolution()
+            contexts.setCurrentIndex(-1)
+        }
     })
 
     socket.on('returnedToBoard', () => {

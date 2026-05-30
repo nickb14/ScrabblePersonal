@@ -38,6 +38,8 @@ class Tile extends Button {
         if (!isFinite(this.value))
             this.value = 0
 
+        if (content === undefined)
+            content = ""
         this.content = content.toString()
         this.lines = [this.content]
         this.longLine = this.content

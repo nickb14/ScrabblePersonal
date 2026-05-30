@@ -7,27 +7,32 @@
                     {
                         "value": 200,
                         "clue": "This is clue 1.1",
-                        "solution": "What is the solution to clue 1.1?"
+                        "solution": "What is the solution to clue 1.1?",
+                        "context": "This is context of clue 1.1"
                     },
                     {
                         "value": 400,
                         "clue": "This is clue 1.2",
-                        "solution": "What is the solution to clue 1.2?"
+                        "solution": "What is the solution to clue 1.2?",
+                        "context": "This is context of clue 1.2"
                     },
                     {
                         "value": 600,
                         "clue": "This is clue 1.3",
-                        "solution": "What is the solution to clue 1.3?"
+                        "solution": "What is the solution to clue 1.3?",
+                        "context": "This is context of clue 1.3"
                     },
                     {
                         "value": 800,
                         "clue": "This is clue 1.4",
-                        "solution": "What is the solution to clue 1.4?"
+                        "solution": "What is the solution to clue 1.4?",
+                        "context": "This is context of clue 1.4"
                     },
                     {
                         "value": 1000,
                         "clue": "This is clue 1.5",
-                        "solution": "What is the solution to clue 1.5?"
+                        "solution": "What is the solution to clue 1.5?",
+                        "context": "This is context of clue 1.5"
                     }
                 ]
             },
